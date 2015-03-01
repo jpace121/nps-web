@@ -11,27 +11,27 @@ def makePlot(input):
     # need something like unwrap_or, instead of this nonsense.
     try:
         data["range_vals"]["t"] = input["range_vals"]["t"]
-    except KeyError:
+    except (KeyError, TypeError):
         data["range_vals"]["t"] = []
     try:
         data["range_vals"]["d"] = input["range_vals"]["d"]
-    except KeyError:
+    except (KeyError, TypeError):
         data["range_vals"]["d"] = []
     try:
         data["cone_vals"]["t"] = input["cone_vals"]["t"]
-    except KeyError:
+    except (KeyError, TypeError):
         data["cone_vals"]["t"] = []
     try:
         data["cone_vals"]["d"] = input["cone_vals"]["d"]
-    except KeyError:
+    except (KeyError, TypeError):
         data["cone_vals"]["d"] = []
     try:
         data["donut_vals"]["t"] = input["donut_vals"]["t"]
-    except KeyError:
+    except (KeyError, TypeError):
         data["donut_vals"]["t"] = []
     try:
         data["donut_vals"]["d"] = input["donut_vals"]["d"]
-    except KeyError:
+    except (KeyError, TypeError):
         data["donut_vals"]["d"] = []
 
     plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r--',
