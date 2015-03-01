@@ -55,3 +55,6 @@ cp ./rc.local /etc/rc.local
 
 echo '==> Set up swap'
 sh ./addswap.sh
+
+echo '==> Move tmux.conf.'
+cp ./tmux.conf ~/.tmux.conf
