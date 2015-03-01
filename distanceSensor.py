@@ -66,6 +66,7 @@ class DistanceSensor(object):
         self.serial = None
         self.streaming = False
         self.lock = False
+	self.connect_time = connect_time
 
     def connect(self):
         """Does the connection."""
