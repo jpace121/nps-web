@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
 
 # load config file
-with open('./config.json') as f:
+with open('/root/python-bluetooth/config.json') as f:
     config_file = json.load(f)
 
 # Sensor related global variables

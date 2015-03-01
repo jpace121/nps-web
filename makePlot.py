@@ -6,8 +6,8 @@ from StringIO import StringIO
 import json
 
 # Open config file
-with open("./config.json") as f:
-    config_file = json.loads(f)
+with open("/root/python-bluetooth/config.json") as f:
+    config_file = json.load(f)
 
 def makePlot(input, style='sensors'):
     # Styles:

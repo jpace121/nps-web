@@ -16,5 +16,5 @@ service dnsmasq restart
 service hostapd restart
 
 echo '==> Start server.'
-python /root/python-bluetooth/serve_tornado.py &
+python /root/python-bluetooth/serve_tornado.py >> /root/run_log.log 2>&1 &
 
