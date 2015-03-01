@@ -35,6 +35,7 @@ def makePlot(input):
     except (KeyError, TypeError):
         data["donut_vals"]["d"] = []
 
+    plt.clf() # clear figure
     plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r--',
              data["cone_vals"]["t"],data["cone_vals"]["d"],'b--',
              data["donut_vals"]["t"],data["donut_vals"]["d"],'g--')
