@@ -6,8 +6,8 @@ import subprocess32 as sub
 import glob
 import os
 
-#ROOT_PATH = "/root/python-bluetooth/" #for reals
-ROOT_PATH = "/Users/jimmy/Desktop/AME/python_bluetooth/" # for testing
+ROOT_PATH = "/root/python-bluetooth/" #for reals
+#ROOT_PATH = "/Users/jimmy/Desktop/AME/python_bluetooth/" # for testing
 # ^ could be replace with sub.call["pwd"]
 
 """
