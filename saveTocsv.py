@@ -13,11 +13,11 @@ files from the GUI.
 """
 
 def get_file_list():
-   print_list = sub.check_output(["ls","./logs"]).split("\n")
+   print_list = sub.check_output(["ls","/root/python-bluetooth/logs"]).split("\n")
    return print_list
 
 def delete_files():
-   to_delete = glob.glob("./logs/*.csv")
+   to_delete = glob.glob("/root/python-bluetooth/logs/*.csv")
    for file in to_delete:
       sub.call(["rm",file])
 
@@ -26,7 +26,7 @@ def zip_for_download():
    ts = time.time()
    filename = datetime.datetime.fromtimestamp(ts).strftime('penetrometer_%Y%m%d_%H%M.zip')
    filepath = "/tmp/"
-   output = sub.call(["zip","-r",filepath+filename,"./logs"])
+   output = sub.call(["zip","-r",filepath+filename,"/root/python-bluetooth/logs"])
    if output == 0:
       return filepath+filename
    else:
@@ -36,7 +36,7 @@ def makeDataFileName():
     # inspired by http://stackoverflow.com/questions/13890935/timestamp-python
    ts = time.time()
    filename = datetime.datetime.fromtimestamp(ts).strftime('penetrometer_%Y%m%d_%H%M%S.csv')
-   filepath = "./logs/"
+   filepath = "/root/python-bluetooth/logs/" #use environment variable?
    return filepath+filename
 
 def jsonToCSV(str_file):
@@ -71,6 +71,8 @@ def jsonToCSV(str_file):
             try:
                elem = big_dict[key][i]
             except IndexError:
+               elem = " "
+            except TypeError:
                elem = " "
             row.append(elem)
          writer.writerow(row)

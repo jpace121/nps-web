@@ -21,7 +21,7 @@ class ForceSensor(object):
             self.cal_m = 0
             self.cal_b = 0
         elif(self.chan_select == 2):
-            # 2-3
+            # 6-7
             self.cal_m = 0
             self.cal_b = 0
         else:
@@ -81,7 +81,7 @@ class ForceSensor(object):
 def _read_once(chan_set,spi):
     """Measure the differential voltage once. At channel "chan_set".
          - chan_set 1 => Ch0+ Ch1-
-         - chan_set 2 => Ch7+ Ch7-
+         - chan_set 2 => Ch6+ Ch7-
     """
     global V_ref
     # What channel do you want?

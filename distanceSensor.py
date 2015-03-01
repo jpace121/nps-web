@@ -11,7 +11,12 @@ def valid_response(response):
     val = False
     # Check for errors.
     # If there is an error, return False.
-    if response[0] == "@":
+    if response is None:
+        # This check was added after server started.
+	print("distanceSensor.py: Handset repsonse is None.")
+    elif len(response) == 0:
+        print("distanceSensor.py: Handset sent a stringof length zero.")
+    elif response[0] == "@":
         print("distanceSensor.py: Error Received from handset", file=sys.stderr)
     elif len(response) != 34:
         print("distanceSensor.py: Response from handset not expected number of bytes", file=sys.stderr)
