@@ -22,5 +22,7 @@ apt-get install bluez-utils bluez # these aren't neccessarily neccessary
 #bluez-utils is buggy, bluez is already installed (?)
 #http://blog.sumostyle.net/2009/11/ubuntu-tethering-via-bluetooth-pan/
 
+#To bind serial to bluetooth.
+rfcomm bind /dev/rfcomm0 00:13:43:02:34:2E
 EOF
 

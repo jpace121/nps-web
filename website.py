@@ -10,8 +10,8 @@ app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
 
 # Sensor related gloabl variables
-range_finder = DistanceSensor('/dev/cu.usbmodem1421')
-#range_finder = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
+#range_finder = DistanceSensor('/dev/cu.usbmodem1421')
+range_finder = DistanceSensor('/dev/rfcomm0')
 cone_sensor = ForceSensor(1)
 donut_sensor = ForceSensor(2)
 
