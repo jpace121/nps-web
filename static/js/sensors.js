@@ -6,17 +6,43 @@
 
 /* Helper functions. */
 
-var popToFront = function (firstelem, array) {
-    array.unshift(firstelem);
-    return array
-};
+$(function () {
+    getStatus();
+})
+
+function getStatus() {
+    $.getJSON($SCRIPT_ROOT + '/_get_range_vals',{
+        option: "get_status"
+    }, function(data) {
+        if(data.result.connected){
+            $("#connect-btn").text("Connected!");
+            $("#connect-btn").addClass("disabled");
+            $("#disconnect-btn").removeClass("disabled");
+            $("#once-btn").removeClass("disabled");
+        }else{
+            $("#connect-btn").text("Connect");
+            $("#connect-btn").removeClass("disabled");
+            $("#disconnect-btn").addClass("disabled");
+            $("#once-btn").addClass("disabled");
+        }
+        if(data.result.streaming && data.result.connected){
+            $("#start-stream-btn").text("Streaming...");
+            $("#start-stream-btn").addClass("disabled");
+            $("#stop-stream-btn").removeClass("disabled");
+        }else if(data.result.connected){ //hack?
+            $("#start-stream-btn").text("Start Stream");
+            $("#start-stream-btn").removeClass("disabled");
+            $("#stop-stream-btn").addClass("disabled");
+        }
+    });
+}
 
 /*"Bound to keys" functions. */
 
 //Connect
 $(function () {
     $('#connect-btn').bind('click',function () {
-        $("connect-btn").text("Connecting...");
+        $("#connect-btn").text("Connecting...");
         console.log("Connect button got hit!");
         $.getJSON($SCRIPT_ROOT + '/_get_range_vals',{
             option: "connect"
