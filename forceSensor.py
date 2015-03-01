@@ -124,7 +124,7 @@ class _ThreadRead_(threading.Thread):
             #print(response)
             self.data["d"].append(response) # Push response to the data list for later
             self.data["t"].append(time.time())
-            sleep(0.01) # I should be bigger....
+            sleep(0.0001) # I need to be small enough to capture peaks.
         return
 
     def stop(self):
