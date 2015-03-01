@@ -66,7 +66,8 @@ def get_range_values_get():
         data['range_vals'] = range_finder.streamStop()
         data['cone_vals'] = cone_sensor.streamStop()
         data['donut_vals'] = donut_sensor.streamStop()
-        fig = plot.makePlot(data)
+        if app_status["streaming"]: #only update fig if I was streaming
+            fig = plot.makePlot(data)
         jsoned = json.dumps(data)
         thread.start_new_thread(tocsv.jsonToCSV, (jsoned,))
         response = "stream_stop"
