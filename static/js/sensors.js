@@ -8,6 +8,8 @@
 
 $(function () {
     getStatus();
+    //setInterval(getStatus,1000);
+   //^ conflicted with the "loading" style messages that overlay some keys.
 })
 
 function getStatus() {
