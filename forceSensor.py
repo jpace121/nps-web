@@ -32,6 +32,7 @@ class ForceSensor(object):
     def connect(self):
         if not self.connected:
             self.connected = True
+            self.connect_time = time.time()
             self.spi.connect()
 
     def disconnect(self):
