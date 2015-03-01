@@ -39,7 +39,8 @@ echo '==> Set up wifi AP.'
 # the binaries live in ../utils for our use.
 apt-get install -y hostapd dnsmasq # dnsmasq already installed for apache?
 cp ./hostapd.conf /etc/hostapd/hostapd.conf
-cp ./hostapd.init /etc/init.d/hostpad
+cp ./hostapd.init /etc/init.d/hostapd
+cp hostapd /usr/sbin/hostapd # hack, b/c the above stuff didn't work...
 cp interfaces /etc/network/interfaces
 cp dnsmasq.conf /etc/dnsmasq.conf
 sudo update-rc.d hostapd defaults

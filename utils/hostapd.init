@@ -13,8 +13,8 @@
 #			Authenticator
 ### END INIT INFO
 
-PATH=/sbin:/bin:/usr/sbin:/usr/bin:/root/python-bluetooth/utils
-DAEMON_SBIN=/root/python-bluetooth/utils/hostapd
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON_SBIN=/usr/sbin/hostapd
 DAEMON_DEFS=/etc/default/hostapd
 DAEMON_CONF=/etc/hostapd/hostapd.conf
 NAME=hostapd
