@@ -52,3 +52,6 @@ sudo update-rc.d dnsmasq defaults
 cp dnsmasq.default /etc/default/dnsmasq
 chmod +x ../start-up.sh # probably redudant
 cp ./rc.local /etc/rc.local
+
+echo '==> Set up swap'
+sh ./addswap.sh
