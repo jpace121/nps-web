@@ -20,10 +20,11 @@ class ADCChip(spidev.SpiDev):
     def close(self):
         if self.connected:
             self.cnt = self.cnt - 1
-            print("ADCChip.py: Count is " + str(self.cnt))
+            #print("ADCChip.py: Count is " + str(self.cnt))
             if self.cnt == 0:
                 spidev.SpiDev.close(self)
-		print("ADCChip.py: Close spi.")
+		self.connected = False
+		#print("ADCChip.py: Close spi.")
 
     def xfer2(self, in_bytes):
         while True:
