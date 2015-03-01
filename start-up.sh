@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 # This scipt shoulf be ran everytime at start up.
 # The script handles the stuff that must be done everytime at boot.
@@ -8,6 +8,7 @@ echo '==> Set up device tree overlay.'
 echo BB-SPIDEV0 >>  /sys/devices/bone_capemgr.9/slots
 
 echo '==> Wifi set up.'
+ifdown wlan0
 ifup wlan0
 service dnsmasq restart
 service hostapd restart

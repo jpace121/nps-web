@@ -31,6 +31,8 @@ iface usb0 inet static
     gateway 192.168.7.1
 
 # Make wifi adaptor listen on wlan0
+#allow-hotplug wlan0
+auto wlan0
 iface wlan0 inet static
     address 192.168.8.2
     netmask 255.255.255.0

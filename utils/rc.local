@@ -12,6 +12,6 @@
 # By default this script does nothing.
 
 # Start-up script.
-/root/python-bluetooth/start-up.sh
+/root/python-bluetooth/start-up.sh >> /root/log.txt
 
 exit 0
