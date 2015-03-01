@@ -6,5 +6,5 @@ chmod 0600 /var/cache/swap/swapfile
 mkswap /var/cache/swap/swapfile
 swapon /var/cache/swap/swapfile
 
-mv /root/python-bluetooth/utils/fstab /etc/fstab
+cp /root/python-bluetooth/utils/fstab /etc/fstab
 
