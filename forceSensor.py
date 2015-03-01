@@ -124,13 +124,37 @@ class _ThreadRead_(threading.Thread):
             #print(response)
             self.data["d"].append(response) # Push response to the data list for later
             self.data["t"].append(time.time())
-            sleep(0.0001) # I need to be small enough to capture peaks.
+            #sleep(0.0001) # I need to be small enough to capture peaks.
         return
 
     def stop(self):
         """When called, stops the while loop in the thread"""
         self.stop_event.set()
         return self.data
+
+def _orig_test_():
+    """Original test code from end of summer 2015. Looks like it prints
+       readings and checks to make sure the chip.cnt is accruately 
+       controlled."""
+    sensor1 = ForceSensor(1,time.time())
+    sensor2 = ForceSensor(2,time.time())
+    sensor1.connect()
+    sensor2.connect()
+    print(sensor2.getForce())
+    sensor1.streamStart()
+    sensor2.streamStart()
+    sleep(0.1)
+    print(sensor1.streamStop())
+    print(sensor2.streamStop())
+    sensor1.disconnect()
+    print(the_chip.cnt)
+    sensor1.streamStart()
+    sensor2.streamStart()
+    sensor1.streamStart()
+    sensor2.streamStart()
+    sleep(0.1)
+    print(sensor1.streamStop())
+    print(sensor2.streamStop())
         
 if __name__ == "__main__":
     sensor1 = ForceSensor(1,time.time())
@@ -140,15 +164,8 @@ if __name__ == "__main__":
     print(sensor2.getForce())
     sensor1.streamStart()
     sensor2.streamStart()
-    sleep(0.5)
-    print(sensor1.streamStop())
-    print(sensor2.streamStop())
-    sensor1.disconnect()
-    print(the_chip.cnt)
-    sensor1.streamStart()
-    sensor2.streamStart()
-    sensor1.streamStart()
-    sensor2.streamStart()
-    sleep(0.5)
-    print(sensor1.streamStop())
-    print(sensor2.streamStop())
+    sleep(1)
+    print("Sample Freq:")
+    print(len(sensor1.streamStop()["d"]))
+    print(len(sensor2.streamStop()["d"]))
+    
