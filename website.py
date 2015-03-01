@@ -60,7 +60,7 @@ def get_range_values_get():
         data['donut_vals'] = donut_sensor.streamStop()
         fig = plot.makePlot(data)
         jsoned = json.dumps(data)
-        thread.start_new_thread(tocsv.jsonToCSV, (jsoned))
+        thread.start_new_thread(tocsv.jsonToCSV, (jsoned,))
         response = "stream_stop"
     elif option == "once":
         response = {}
