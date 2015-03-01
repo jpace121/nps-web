@@ -14,6 +14,8 @@ pip install spidev
 
 #B/c we ship python apps
 pip install virtualenv
+pip install flask
+pip install tornado
 
 #Bluetooth
 apt-get install bluez-utils bluez # these aren't neccessarily neccessary
