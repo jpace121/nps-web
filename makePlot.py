@@ -55,7 +55,7 @@ def makePlot(input):
         plt.plot(0,0)
     plt.ylabel('Voltage (V)') #this will be a pressure by the time it gets here
     plt.xlabel('Time (s)')
-    plt.legend(["Range Values", "Cone Values", "Donut Values"], 'lower right')
+    plt.legend(["Cone Values", "Donut Values"], 'lower right')
     
     # from http://stackoverflow.com/questions/20107414/passing-a-matplotlib-figure-to-html-flask
     img = StringIO()
