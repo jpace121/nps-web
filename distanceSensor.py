@@ -66,7 +66,6 @@ class DistanceSensor(object):
         self.serial = None
         self.streaming = False
         self.lock = False
-        self.connect_time = connect_time
 
     def connect(self):
         """Does the connection."""
@@ -77,7 +76,6 @@ class DistanceSensor(object):
                 print("distanceSensor.py: Could not connect to serial port.", file=sys.stderr)
             else:
                 self.connected = True
-                self.connect_time = time.time()
         else:
             pass
 
