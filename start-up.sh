@@ -2,8 +2,8 @@
 rfcomm bind /dev/rfcomm0 00:13:43:02:34:2E
 echo BB-SPIDEV0 >>  /sys/devices/bone_capemgr.9/slots
 
-hostapd -B ./utils/hostapd.conf
-ifconfig wlan0 192.168.0.1
+ifup wlan0
+hostapd -B /root/python-bluetooth/utils/hostapd.conf
 
-python serve_tornado.py
+python /root/python-bluetooth/serve_tornado.py
 

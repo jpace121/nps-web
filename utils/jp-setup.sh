@@ -45,3 +45,4 @@ cp interfaces /etc/network/interfaces
 cp dnsmasq.conf /etc/dnsmasq.conf
 sudo update-rc.d hostapd defaults
 sudo update-rc.d dnsmasq defaults
+cp dnsmasq.defualt /etc/default/dnsmasq
