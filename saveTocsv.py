@@ -7,7 +7,7 @@ import glob
 import os
 
 # Load config file
-with open("root/python-bluetooth/config.json") as f:
+with open("/root/python-bluetooth/config.json") as f:
    config_file = json.load(f)
    
 ROOT_PATH = str(config_file["rootpath"])
