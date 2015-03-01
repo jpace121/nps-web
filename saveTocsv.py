@@ -4,6 +4,7 @@ import time
 import datetime
 import subprocess32 as sub
 import glob
+import os
 
 """
 Converts a json file created by the website.py website into a csv file
@@ -26,7 +27,10 @@ def zip_for_download():
    ts = time.time()
    filename = datetime.datetime.fromtimestamp(ts).strftime('penetrometer_%Y%m%d_%H%M.zip')
    filepath = "/tmp/"
+   orig_dir = sub.check_output(["pwd"]).rstrip()
+   os.chdir("/root/python-bluetooth")
    output = sub.call(["zip","-r",filepath+filename,"/root/python-bluetooth/logs"])
+   os.chdir(orig_dir)
    if output == 0:
       return filepath+filename
    else:
