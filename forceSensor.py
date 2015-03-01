@@ -124,7 +124,7 @@ class _ThreadRead_(threading.Thread):
             #print(response)
             self.data["d"].append(response) # Push response to the data list for later
             self.data["t"].append(time.time())
-            sleep(0.0001) # I should be bigger....
+            sleep(0.01) # I should be bigger....
         return
 
     def stop(self):
@@ -140,9 +140,15 @@ if __name__ == "__main__":
     print(sensor2.getForce())
     sensor1.streamStart()
     sensor2.streamStart()
-    sleep(0.001)
+    sleep(0.5)
     print(sensor1.streamStop())
     print(sensor2.streamStop())
     sensor1.disconnect()
-    sensor2.disconnect()
     print(the_chip.cnt)
+    sensor1.streamStart()
+    sensor2.streamStart()
+    sensor1.streamStart()
+    sensor2.streamStart()
+    sleep(0.5)
+    print(sensor1.streamStop())
+    print(sensor2.streamStop())
