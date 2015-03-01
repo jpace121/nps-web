@@ -131,6 +131,6 @@ if __name__ == "__main__":
     sensor = ForceSensor(1)
     sensor.connect()
     sensor.streamStart()
-    sleep(0.1)
+    sleep(0.001)
     print(sensor.streamStop())
         
