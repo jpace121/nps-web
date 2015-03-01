@@ -42,7 +42,7 @@ def get_range_values_get():
     if option == "stream_start":
         if not range_finder.streaming:
             while not range_finder.isAlive():
-                sleep(1)
+                sleep(0.1)
         if not range_finder.streaming:
             range_finder.streamStart()
         if not donut_sensor.streaming:
@@ -72,7 +72,7 @@ def get_range_values_get():
                 response['range'] = range_finder.getDistance()
                 break
             else:
-                sleep(1)
+                sleep(0.1)
     elif option == "connect":
         if not range_finder.connected:
             range_finder.connect()
