@@ -1,3 +1,5 @@
+#!/usr/bin/sh
+
 # This scipt shoulf be ran everytime at start up.
 # The script handles the stuff that must be done everytime at boot.
 echo '==> Bind Bluetooth port.'
@@ -12,5 +14,5 @@ service hostapd restart
 #hostapd -B /root/python-bluetooth/utils/hostapd.conf
 
 echo '==> Start server.'
-python /root/python-bluetooth/serve_tornado.py
+python /root/python-bluetooth/serve_tornado.py &
 

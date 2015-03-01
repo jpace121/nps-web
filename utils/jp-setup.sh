@@ -46,3 +46,5 @@ cp dnsmasq.conf /etc/dnsmasq.conf
 sudo update-rc.d hostapd defaults
 sudo update-rc.d dnsmasq defaults
 cp dnsmasq.default /etc/default/dnsmasq
+chmod +x ../start-up.sh
+cp ./rc.local /etc/rc.local
