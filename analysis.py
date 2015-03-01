@@ -7,7 +7,7 @@ import json
 import makePlot as plot
 import base64
 
-with open('./config.json') as f:
+with open('/root/python-bluetooth/config.json') as f:
     config_file = json.load(f)
 
 def find_maxes(filename):

@@ -7,7 +7,7 @@ import glob
 import os
 
 # Load config file
-with open("./config.json") as f:
+with open("/root/python-bluetooth/config.json") as f:
    config_file = json.load(f)
    
 ROOT_PATH = str(config_file["rootpath"])
@@ -26,6 +26,9 @@ def get_file_list():
 def delete_files():
    to_delete = glob.glob(ROOT_PATH + "logs/*.csv")
    for file in to_delete:
+      sub.call(["rm",file])
+   to_delete_txt = glob.glob(ROOT_PATH + "logs/*.txt")
+   for file in to_delete_txt:
       sub.call(["rm",file])
 
 def zip_for_download():

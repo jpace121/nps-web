@@ -1,7 +1,7 @@
 {
-    "rootpath": "./",
+    "rootpath": "/root/python-bluetooth/",
     "save_tmp_plot": false ,
-    "distance_sensor_path": "/dev/tty.DISTOD3910350799-Serial",
+    "distance_sensor_path": "/dev/rfcomm0",
     "calibValues": {
         "cone_m": 77.1489,
         "cone_b": -7.5264,
