@@ -7,6 +7,7 @@ from time import sleep, time
 import saveTocsv as tocsv
 import json
 import makePlot as plot
+from nocache import nocache
 
 app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
@@ -117,6 +118,7 @@ def _get_file():
     return send_file(tocsv.zip_for_download())
 
 @app.route('/image/fig')
+@nocache
 def fig_fn():
     return send_file(fig, mimetype='image/png')
     
