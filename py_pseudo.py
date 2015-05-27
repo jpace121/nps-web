@@ -1,9 +1,18 @@
 import serial
+from time import sleep #because flush is non blocking
 
 class DistanceSensor(object):
     def __init__(self,fileAddr ):
         # Open the serial port for the sensor
-        self.serial = serial.Serial(fileAddr, 9600) # this guy can be private
+        # In Java, may move to separate build method, which is not the
+        # constructor, which should allow us to cath errors better.
+        self.connected = False
+        try:
+            self.serial = serial.Serial(fileAddr, 9600) # can be private
+        except serial.serialutil.SerialException:
+            print "Can not find serial port."
+        else:
+            self.connected = True
 
 
     def getDistance(self):
@@ -11,12 +20,12 @@ class DistanceSensor(object):
         NUMSTARTGOODBYTE = 7
 
         # send "read" signal
-        self.serial.flush();
-        self.serial.write('g\n')
+        self.serial.flush()
+        self.serial.write('g\r\n')
 
         # read the signal until \n
         response = self.serial.readline() # reads until EOL
-        self.serial.flush()
+        #print repr(response)
         #print response
         
         # Check for errors.
@@ -29,13 +38,13 @@ class DistanceSensor(object):
         # instead of float, but I don't think performance is that critical 
         # for this...
         if response[0] == "@":
-            #err = "Error Received"
+            print "Error Received"
             val = None
         elif len(response) != 34:
-            #err = "Too small"
+            print "Too small"
             val = None
         elif response[0:7] != "31..02+":
-            #err = "Violate initial value assumption"
+            print "Violate initial value assumption"
             val = None
         else:
             # Parse out the actual distance from the noise
@@ -43,7 +52,21 @@ class DistanceSensor(object):
             
         return val
 
+    def isAlive(self):
+        # Send command
+        self.serial.flush()
+        self.serial.write('a\r\n')
+        # Read repsonse, looking for '?'
+        val = self.serial.readline()
+        #val = self.serial.read(1)
+        #print repr(val)
+        if(val == '?\r\n'):
+            return True
+        else:
+            return False
+
 if __name__ == '__main__':
     mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial');
-    val = mySensor.getDistance()
-    print val
+    if mySensor.connected:
+        print mySensor.getDistance()
+        assert(mySensor.isAlive())
