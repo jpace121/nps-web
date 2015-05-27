@@ -9,31 +9,41 @@ class DistanceSensor(object):
     def getDistance(self):
         NUMBYTESRESPONSE = 15
         NUMSTARTGOODBYTE = 7
-        # send read signal
+
+        # send "read" signal
         self.serial.flush();
         self.serial.write('g\n')
-       
-        # read the response
-        #self.serial.read(34) #reads all the bytes
-        #response = self.serial.read(NUMBYTESRESPONSE) # reads only the first "relevant" number ignoring the "EOL" number
-        
+
+        # read the signal until \n
         response = self.serial.readline() # reads until EOL
         self.serial.flush()
-        print response
+        #print response
         
-        # Check for error. (I miss match statements. This could also be implemented as a dict, but that translates crappily to Java, so I won't.)
+        # Check for errors.
+        # If there is an error, return 0.0 for val and set err to an error
+        # string. If no error set err to None and val to the value in inches.
+        # This needs to be translated to idiomatic Java.
+
+        # If there is an error, return None, (NaN in Java). If ok, return
+        # val. This will be expensive in Java b/c I will have to use Float 
+        # instead of float, but I don't think performance is that critical 
+        # for this...
         if response[0] == "@":
-            print "Error Received"
+            #err = "Error Received"
+            val = None
         elif len(response) != 34:
-            print "Too small"
+            #err = "Too small"
+            val = None
         elif response[0:7] != "31..02+":
-            print "Violate initial value assumption"
+            #err = "Violate initial value assumption"
+            val = None
         else:
             # Parse out the actual distance from the noise
             val = int(response[NUMSTARTGOODBYTE:NUMBYTESRESPONSE])/10.
-            #print response[NUMSTARTGOODBYTE:NUMBYTESRESPONSE]
-            return val
+            
+        return val
 
 if __name__ == '__main__':
     mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial');
-    print mySensor.getDistance()
+    val = mySensor.getDistance()
+    print val
