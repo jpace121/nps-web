@@ -58,15 +58,17 @@ class DistanceSensor(object):
         self.serial.write('a\r\n')
         # Read repsonse, looking for '?'
         val = self.serial.readline()
-        #val = self.serial.read(1)
+        #val = self.serial.read(1) # does not work
         #print repr(val)
         if(val == '?\r\n'):
             return True
         else:
+            print "a repsonse: " + repr(val)
             return False
 
 if __name__ == '__main__':
     mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial');
     if mySensor.connected:
+        assert(mySensor.isAlive())
         print mySensor.getDistance()
         assert(mySensor.isAlive())
