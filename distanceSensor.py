@@ -3,7 +3,7 @@ import sys
 import serial
 from time import sleep #because flush is non blocking?
 import threading
-import Queue
+from Queue import Queue
 
 def interp_response(response):
     """Given a repsonse from the handset, transforms it into a number."""
@@ -12,7 +12,7 @@ def interp_response(response):
     if response[0] == "@":
         print("distanceSensor.py: Error Received from handset", file=sys.stderr)
         val = None
-    elif len(response) != 34:
+    elif len(response) != 17: # this was 34 for some reason pre-Arduino?
         print("distanceSensor.py: Response from handset not expected number of bytes", file=sys.stderr)
         val = None
     elif response[0:7] != "31..02+":
@@ -26,11 +26,11 @@ def interp_response(response):
 class _ThreadRead_(threading.Thread):
     """Reads values from distance sensor in its streaming mode in
        a separate thread."""
-    def __init(self,serial):
+    def __init__(self,serial,queue):
         threading.Thread.__init__(self)
         self.serial = serial
-        self.stop_Event = threading.Event()
-        self.data = []
+        self.stop_event = threading.Event()
+        self.queue = queue
 
     def run(self):
         """run is the function ran by the thread"""
@@ -41,15 +41,16 @@ class _ThreadRead_(threading.Thread):
         while(not self.stop_event.is_set()):
             # read values until stop is sent
             response = self.serial.readline() # reads until EOL
-            self.data.push(response) # Push response to the data list for later
+            self.queue.put(response) # Push response to the data list for later
+        return
 
     def stop(self):
-        """When called, stops the thread"""
-        self.stop_Event.set()
-        return self.data
+        """When called, stops the while loop in the thread"""
+        self.stop_event.set()
 
 class DistanceSensor(object):
     def __init__(self, fileAddr):
+        self.queue = Queue(maxsize=0)
         # Open the serial port for the sensor
         self.connected = False
         try:
@@ -86,21 +87,25 @@ class DistanceSensor(object):
         """Puts handset in streaming mode and pulls the values in a
            separate thread.
            The values are returned from streamstop"""
-        self.thread = _ThreadRead_(self.serial)
+        self.thread = _ThreadRead_(self.serial,self.queue)
         self.thread.start()
 
     def streamStop(self):
         """Stops the streaming and returns the values from it."""
         values = []
-        responses = self.thread.stop()
-        for response in responses:
-            values.pop(interp_response(response))
+        self.thread.stop()
+        while not self.queue.empty():
+            response = self.queue.get()
+            print(response)
+            values.append(interp_response(response))
         return values
 
 if __name__ == '__main__':
-    mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
+    mySensor = DistanceSensor('/dev/cu.usbmodem1421')
+    sleep(2) # Arduino is stupid
     if mySensor.connected:
         print(mySensor.getDistance())
         mySensor.streamStart()
         sleep(10)
         print(mySensor.streamStop())
+        print("end main")
