@@ -26,11 +26,11 @@ def interp_response(response):
 class _ThreadRead_(threading.Thread):
     """Reads values from distance sensor in its streaming mode in
        a separate thread."""
-    def __init__(self,serial,queue):
+    def __init__(self,serial):
         threading.Thread.__init__(self)
         self.serial = serial
         self.stop_event = threading.Event()
-        self.queue = queue
+        self.data = []
 
     def run(self):
         """run is the function ran by the thread"""
@@ -41,20 +41,20 @@ class _ThreadRead_(threading.Thread):
         while(not self.stop_event.is_set()):
             # read values until stop is sent
             response = self.serial.readline() # reads until EOL
-            self.queue.put(response) # Push response to the data list for later
+            self.data.append(response) # Push response to the data list for later
         return
 
     def stop(self):
         """When called, stops the while loop in the thread"""
         self.stop_event.set()
+        return self.data
 
 class DistanceSensor(object):
     def __init__(self, fileAddr):
-        self.queue = Queue(maxsize=0)
         # Open the serial port for the sensor
         self.connected = False
         try:
-            self.serial = serial.Serial(fileAddr, 9600)
+            self.serial = serial.Serial(fileAddr, 9600, timeout=3)
         except serial.serialutil.SerialException:
            print("distanceSensor.py: Could not connect to serial port.", file=sys.stderr)
         else:
@@ -87,15 +87,15 @@ class DistanceSensor(object):
         """Puts handset in streaming mode and pulls the values in a
            separate thread.
            The values are returned from streamstop"""
-        self.thread = _ThreadRead_(self.serial,self.queue)
+        self.thread = _ThreadRead_(self.serial)
         self.thread.start()
 
     def streamStop(self):
         """Stops the streaming and returns the values from it."""
         values = []
-        self.thread.stop()
-        while not self.queue.empty():
-            response = self.queue.get()
+        data = self.thread.stop()
+        self.serial.write('t\r\n') # tell the handset to stop sending
+        for response in data:
             print(response)
             values.append(interp_response(response))
         return values
@@ -106,6 +106,5 @@ if __name__ == '__main__':
     if mySensor.connected:
         print(mySensor.getDistance())
         mySensor.streamStart()
-        sleep(10)
+        sleep(11)
         print(mySensor.streamStop())
-        print("end main")
