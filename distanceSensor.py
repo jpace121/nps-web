@@ -5,23 +5,25 @@ from time import sleep #because flush is non blocking?
 import threading
 from Queue import Queue
 
-def interp_response(response):
-    """Given a repsonse from the handset, transforms it into a number."""
+def valid_response(response):
+    """Given a repsonse from the handset, detemrine if valid."""
+    val = False
     # Check for errors.
-    # If there is an error, return None and log. If ok, return val.
+    # If there is an error, return False.
     if response[0] == "@":
         print("distanceSensor.py: Error Received from handset", file=sys.stderr)
-        val = None
     elif len(response) != 17: # this was 34 for some reason pre-Arduino?
         print("distanceSensor.py: Response from handset not expected number of bytes", file=sys.stderr)
-        val = None
     elif response[0:7] != "31..02+":
         print("distanceSensor.py: Response Violate initial value assumption", file=sys.stderr)
-        val = None
     else:
         # Parse out the actual distance from the noise
-        val = int(response[7:15])/10.
+        val = True
     return val
+    
+def interp_response(response):
+    """Interprets a VALID repsonse."""
+    return (int(response[7:15])/10.)
     
 class _ThreadRead_(threading.Thread):
     """Reads values from distance sensor in its streaming mode in
@@ -55,6 +57,7 @@ class DistanceSensor(object):
         self.connected = False
         self.fileAddr = fileAddr
         self.serial = None
+        self.streaming = False
 
     def connect(self):
         """Does the connection."""
@@ -74,10 +77,10 @@ class DistanceSensor(object):
         self.serial.write('g\r\n')
 
         # read the signal until \n
-        response = self.serial.readline() # reads until EOL
+        resp = self.serial.readline() # reads until EOL
 
-        # Return the interpreted response
-        return interp_response(response)
+        # Return the interpreted response (need a better none)
+        return (interp_response(resp) if valid_response(resp) else None)
 
     def isAlive(self):
         """Tells if hanset is reponsive. Call before calling any other
@@ -98,16 +101,18 @@ class DistanceSensor(object):
         """Puts handset in streaming mode and pulls the values in a
            separate thread.
            The values are returned from streamstop"""
-        self.thread = _ThreadRead_(self.serial)
-        self.thread.start()
+        if (not self.streaming):
+            self.thread = _ThreadRead_(self.serial)
+            self.thread.start()
+            self.streaming = True
 
     def streamStop(self):
         """Stops the streaming and returns the values from it."""
-        values = []
-        data = self.thread.stop()
-        self.serial.write('t\r\n') # tell the handset to stop sending
-        for response in data:
-            values.append(interp_response(response))
+        if self.streaming:
+            self.streaming = False
+            data = self.thread.stop()
+            self.serial.write('t\r\n') # tell the handset to stop sending
+        values = [interp_response(x) for x in data if valid_response(x)]
         return values
 
 if __name__ == '__main__':
@@ -122,4 +127,4 @@ if __name__ == '__main__':
             print(mySensor.streamStop())
             break
         else:
-            sleep(0.5)
+            sleep(0.25)
