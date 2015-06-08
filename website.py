@@ -40,7 +40,7 @@ def get_range_values_get():
                 response = "stream_started"
                 break
             else:
-                sleep(0.25)
+                sleep(1) #0.25 is kind of fast, no one is in hurry...
     elif option == "stream_stop":
         response = range_finder.streamStop()
     elif option == "once":
@@ -49,7 +49,7 @@ def get_range_values_get():
                 response = range_finder.getDistance()
                 break
             else:
-                sleep(0.25)
+                sleep(1)
     else:
         response = "error"
     return jsonify(result=response)
