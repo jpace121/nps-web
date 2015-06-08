@@ -112,7 +112,9 @@ class DistanceSensor(object):
             self.streaming = False
             data = self.thread.stop()
             self.serial.write('t\r\n') # tell the handset to stop sending
-        values = [interp_response(x) for x in data if valid_response(x)]
+            values = [interp_response(x) for x in data if valid_response(x)]
+        else:
+            values = None
         return values
 
 if __name__ == '__main__':
