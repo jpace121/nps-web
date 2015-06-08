@@ -53,12 +53,20 @@ class DistanceSensor(object):
     def __init__(self, fileAddr):
         # Open the serial port for the sensor
         self.connected = False
-        try:
-            self.serial = serial.Serial(fileAddr, 9600, timeout=3)
-        except serial.serialutil.SerialException:
-           print("distanceSensor.py: Could not connect to serial port.", file=sys.stderr)
+        self.fileAddr = fileAddr
+        self.serial = None
+
+    def connect(self):
+        """Does the connection."""
+        if not self.connected:
+            try:
+                self.serial = serial.Serial(self.fileAddr, 9600, timeout=3)
+            except serial.serialutil.SerialException:
+                print("distanceSensor.py: Could not connect to serial port.", file=sys.stderr)
+            else:
+                self.connected = True
         else:
-            self.connected = True
+            pass
             
     def getDistance(self):
         # send "read" signal
@@ -72,16 +80,19 @@ class DistanceSensor(object):
         return interp_response(response)
 
     def isAlive(self):
-        # Send command
-        self.serial.flush()
-        self.serial.write('a\r\n')
-        # Read repsonse, looking for '?'
-        val = self.serial.readline()
+        """Tells if hanset is reponsive. Call before calling any other
+           method. It is the only method that checks..."""
+        resp = False
+        if(self.connected):
+            # Send command
+            self.serial.flush()
+            self.serial.write('a\r\n')
+            # Read repsonse, looking for '?'
+            val = self.serial.readline()
 
-        if(val == '?\r\n'):
-            return True
-        else:
-            return False
+            if(val == '?\r\n'):
+                resp = True
+        return resp
 
     def streamStart(self):
         """Puts handset in streaming mode and pulls the values in a
@@ -96,15 +107,19 @@ class DistanceSensor(object):
         data = self.thread.stop()
         self.serial.write('t\r\n') # tell the handset to stop sending
         for response in data:
-            print(response)
             values.append(interp_response(response))
         return values
 
 if __name__ == '__main__':
     mySensor = DistanceSensor('/dev/cu.usbmodem1421')
-    sleep(2) # Arduino is stupid
-    if mySensor.connected:
-        print(mySensor.getDistance())
-        mySensor.streamStart()
-        sleep(11)
-        print(mySensor.streamStop())
+    mySensor.connect()
+    #sleep(2) # Arduino is stupid
+    while True:
+        if mySensor.isAlive():
+            print(mySensor.getDistance())
+            mySensor.streamStart()
+            sleep(11)
+            print(mySensor.streamStop())
+            break
+        else:
+            sleep(0.5)
