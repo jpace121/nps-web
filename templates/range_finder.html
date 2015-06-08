@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row">
+  <div class="col-sm-6" >
+    <h2>Display</h2>
+        <span id="result"i>? </span>
+    </div>
+  <div class="col-sm-6">
+    <h2> Controls </h2>
+      <div class="btn-group" role="group" aria-label="...">
+        <button type="button" class="btn btn-default" id="once-btn">One Reading</button>
+        <button type="button" class="btn btn-default" id="start-stream-btn">Start Stream</button>
+        <button type="button" class="btn btn-default" id="stop-stream-btn">Stop Stream</button>
+        </div> <!--button group-->
+    </div>
+</div> <!-- End row -->
+
+
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/range_finder.js"></script>
+{% endblock %}

@@ -1,0 +1,7 @@
+
+/*Hack so content on top isn't covered by Navbar
+  I feel like instead of px, this should be relative somehow?
+*/
+body {
+    padding-top: 60px;
+}
