@@ -12,7 +12,7 @@ def valid_response(response):
     # If there is an error, return False.
     if response[0] == "@":
         print("distanceSensor.py: Error Received from handset", file=sys.stderr)
-    elif len(response) != 17: # this was 34 for some reason pre-Arduino?
+    elif len(response) != 34:
         print("distanceSensor.py: Response from handset not expected number of bytes", file=sys.stderr)
     elif response[0:7] != "31..02+":
         print("distanceSensor.py: Response Violate initial value assumption", file=sys.stderr)
@@ -63,7 +63,7 @@ class DistanceSensor(object):
         """Does the connection."""
         if not self.connected:
             try:
-                self.serial = serial.Serial(self.fileAddr, 9600, timeout=3)
+                self.serial = serial.Serial(self.fileAddr, 9600, timeout=5)
             except serial.serialutil.SerialException:
                 print("distanceSensor.py: Could not connect to serial port.", file=sys.stderr)
             else:
@@ -118,7 +118,8 @@ class DistanceSensor(object):
         return values
 
 if __name__ == '__main__':
-    mySensor = DistanceSensor('/dev/cu.usbmodem1421')
+    #mySensor = DistanceSensor('/dev/cu.usbmodem1421')
+    mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
     mySensor.connect()
     #sleep(2) # Arduino is stupid
     while True:
