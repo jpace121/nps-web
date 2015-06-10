@@ -58,6 +58,7 @@ class DistanceSensor(object):
         self.fileAddr = fileAddr
         self.serial = None
         self.streaming = False
+        self.lock = False
 
     def connect(self):
         """Does the connection."""
@@ -73,25 +74,32 @@ class DistanceSensor(object):
             
     def getDistance(self):
         # send "read" signal
-        self.serial.flush()
-        self.serial.write('g\r\n')
+        if not self.lock:
+            self.lock = True
+            self.serial.flush()
+            self.serial.write('g\r\n')
 
-        # read the signal until \n
-        resp = self.serial.readline() # reads until EOL
+            # read the signal until \n
+            resp = self.serial.readline() # reads until EOL
+            self.lock = False
 
-        # Return the interpreted response (need a better none)
-        return (interp_response(resp) if valid_response(resp) else None)
+            # Return the interpreted response (need a better none)
+            return (interp_response(resp) if valid_response(resp) else None)
+        else:
+            return None
 
     def isAlive(self):
         """Tells if hanset is reponsive. Call before calling any other
            method. It is the only method that checks..."""
-        resp = False
-        if(self.connected):
+        resp = None
+        if(self.connected and not self.lock):
             # Send command
+            self.lock = True
             self.serial.flush()
             self.serial.write('a\r\n')
             # Read repsonse, looking for '?'
             val = self.serial.readline()
+            self.lock = False
 
             if(val == '?\r\n'):
                 resp = True
@@ -101,7 +109,8 @@ class DistanceSensor(object):
         """Puts handset in streaming mode and pulls the values in a
            separate thread.
            The values are returned from streamstop"""
-        if (not self.streaming):
+        if (not self.streaming and not self.lock):
+            self.lock = True
             self.thread = _ThreadRead_(self.serial)
             self.thread.start()
             self.streaming = True
@@ -112,6 +121,7 @@ class DistanceSensor(object):
             self.streaming = False
             data = self.thread.stop()
             self.serial.write('t\r\n') # tell the handset to stop sending
+            self.lock = False
             values = [interp_response(x) for x in data if valid_response(x)]
         else:
             values = None
@@ -126,7 +136,9 @@ if __name__ == '__main__':
         if mySensor.isAlive():
             print(mySensor.getDistance())
             mySensor.streamStart()
-            sleep(11)
+            sleep(5)
+            mySensor.getDistance()
+            sleep(5)
             print(mySensor.streamStop())
             break
         else:

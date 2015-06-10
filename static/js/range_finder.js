@@ -35,7 +35,7 @@ $(function () {
         $.getJSON($SCRIPT_ROOT + '/_get_range_vals',{
             option: "once"
        }, function(data) {
-           $("#result").text(data.result)
+           $("#result").html(data.result)
        });
         return false; //to remove the button from hreffing
         })

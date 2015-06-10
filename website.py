@@ -55,6 +55,11 @@ def get_range_values_get():
         response = "error"
     return jsonify(result=response)
 
+@app.route('/force_sensors.html')
+@app.route('/downloads.html')
+def test_page():
+    return render_template('downloads.html')
+
 if __name__ == '__main__':
     app.run()
 
