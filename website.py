@@ -15,20 +15,11 @@ range_finder = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
 def index_html():
     return render_template('index.html')
 
-@app.route('/receive', methods=['POST','GET'])
-def receive():
-    pass;
-"""
-    number1 = request.form['number1']
-    number2 =request.form['number2']
-    summed = int(number1) + int(number2)
-    return render_template('receive.html',sum=summed)
-"""
-@app.route('/range_finder.html')
-def range_finder_html():
+@app.route('/sensors.html')
+def sensors_html():
     global range_finder
     range_finder.connect()
-    return render_template('range_finder.html')
+    return render_template('sensors.html')
 
 @app.route('/_get_range_vals') #I may want to make this a post instead of get?
 def get_range_values_get():
@@ -55,7 +46,6 @@ def get_range_values_get():
         response = "error"
     return jsonify(result=response)
 
-@app.route('/force_sensors.html')
 @app.route('/downloads.html')
 def test_page():
     return render_template('downloads.html')
