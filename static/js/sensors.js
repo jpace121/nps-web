@@ -4,9 +4,23 @@
   anonymous functions.
 */
 
-//Start Streaming
+//Connect
 $(function () {
-    $('#start-stream-btn').bind('click',function () {
+    $('#connect-btn').bind('click',function () {
+        $("connect-btn").text("Connecting...");
+        $.getJSON($SCRIPT_ROOT + '/_get_range_vals',{
+            option: "connect"
+       }, function(data) {
+           $("#connect-btn").text("Connected!");
+           $("#stream-btn").removeClass("disabled");
+           $("#once-btn").removeClass("disabled");
+       });
+        return false; //to remove the button from hreffing
+        })
+});
+//Streaming
+$(function () {
+    $('#stream-btn').bind('click',function () {
         $.getJSON($SCRIPT_ROOT + '/_get_range_vals',{
             option: "stream_start"
        }, function(data) {

@@ -17,8 +17,6 @@ def index_html():
 
 @app.route('/sensors.html')
 def sensors_html():
-    global range_finder
-    range_finder.connect()
     return render_template('sensors.html')
 
 @app.route('/_get_range_vals') #I may want to make this a post instead of get?
@@ -42,12 +40,16 @@ def get_range_values_get():
                 break
             else:
                 sleep(1)
+    elif option =="connect":
+        if not range_finder.connected:
+            range_finder.connect()
+        response = "connected"
     else:
         response = "error"
     return jsonify(result=response)
 
 @app.route('/downloads.html')
-def test_page():
+def downloads_html():
     return render_template('downloads.html')
 
 if __name__ == '__main__':
