@@ -7,8 +7,8 @@ app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
 
 # Sensor related gloabl variables
-#range_finder = DistanceSensor('/dev/cu.usbmodem1421')
-range_finder = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
+range_finder = DistanceSensor('/dev/cu.usbmodem1421')
+#range_finder = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
 
 @app.route('/')
 @app.route('/index.html')
@@ -36,14 +36,23 @@ def get_range_values_get():
     elif option == "once":
         while True:
             if range_finder.isAlive():
-                response = range_finder.getDistance()
+                response = {}
+                response['range'] = range_finder.getDistance()
                 break
             else:
                 sleep(1)
-    elif option =="connect":
+    elif option == "connect":
         if not range_finder.connected:
             range_finder.connect()
-        response = "connected"
+            response = "connected"
+        if not range_finder.connected:
+            response = "error"
+    elif option == "disconnect":
+        if range_finder.connected:
+            range_finder.disconnect()
+            response = "disconnected"
+        if range_finder.connected:
+            response = "error"
     else:
         response = "error"
     return jsonify(result=response)

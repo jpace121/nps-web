@@ -71,6 +71,11 @@ class DistanceSensor(object):
                 self.connected = True
         else:
             pass
+
+    def disconnect(self):
+        if self.connected:
+            self.serial.close()
+            self.connected = False
             
     def getDistance(self):
         # send "read" signal
