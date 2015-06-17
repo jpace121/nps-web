@@ -1,4 +1,6 @@
+from __future__ import print_function
 from distanceSensor import DistanceSensor
+from forceSensor import ForceSensor
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash, jsonify
 from time import sleep
@@ -9,6 +11,8 @@ app.config['DEBUG'] = True # should be False in production
 # Sensor related gloabl variables
 range_finder = DistanceSensor('/dev/cu.usbmodem1421')
 #range_finder = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
+cone_sensor = ForceSensor(1)
+donut_sensor = ForceSensor(2)
 
 @app.route('/')
 @app.route('/index.html')
@@ -24,19 +28,31 @@ def get_range_values_get():
     global range_finder
     option = request.args.get('option','None')
     if option == "stream_start":
-        while True:
-            if range_finder.isAlive():
-                range_finder.streamStart()
-                response = "stream_started"
-                break
-            else:
-                sleep(1) #0.25 is kind of fast, no one is in hurry...
+        while not range_finder.isAlive():
+            sleep(1)
+        if not range_finder.streaming:
+            range_finder.streamStart()
+        if not donut_sensor.streaming:
+            donut_sensor.streamStart()
+        if not cone_sensor.streaming:
+            cone_sensor.streamStart()
+        if not range_finder.streaming or not donut_sensor.streaming or not cone_sensor.streaming:
+            response = "error"
+        else:
+            response = "stream_started"
     elif option == "stream_stop":
-        response = range_finder.streamStop()
+        response = {}
+        response['range_vals'] = range_finder.streamStop()
+        response['cone_vals'] = cone_sensor.streamStop()
+        response['donut_vals'] = donut_sensor.streamStop()
+        
     elif option == "once":
+        response = {}
+        response['range'] = None
+        response['cone_force'] = cone_sensor.getForce()
+        response['donut_force'] = donut_sensor.getForce()
         while True:
             if range_finder.isAlive():
-                response = {}
                 response['range'] = range_finder.getDistance()
                 break
             else:
@@ -45,7 +61,10 @@ def get_range_values_get():
         if not range_finder.connected:
             range_finder.connect()
             response = "connected"
-        if not range_finder.connected:
+        if not donut_sensor.connected and not cone_sensor.connected:
+            donut_sensor.connect()
+            cone_sensor.connect()
+        if not range_finder.connected and not cone_sensor.connected and not donut_sensor.connected:
             response = "error"
     elif option == "disconnect":
         if range_finder.connected:

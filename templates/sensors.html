@@ -3,28 +3,36 @@
 
 <div class="row">
 
-  <div class="col-sm-6" >
+  <div class="col-md-6" >
     <h2>Display</h2>
-    <div class="table-responsive">
+      <div class="row">
+    <div class="table col-md-6">
       <table class="table table-bordered table-condensed tabeled-striped">
         <tr>
           <td id="once-range">N/A </td>
-          <td id="once-adc">N/A </td>
+          <td id="once-cone">N/A </td>
+          <td id="once-donut">N/A </td>
           </tr>
         <tr>
-          <th> One Distance Measure </th>
-          <th> One Force Reading </th>
+          <th> Distance Measure </th>
+          <th> Force Reading Cone </th>
+          <th> Force Reading Donut </th>
           </tr>
         </table>
       </div> <!-- table -->
-        <div id="result">? </div>
+    </div> <!-- row for table -->
+      <div class = "row">
+        <div class="col-md-12">
+          <canvas id="chart"></canvas>
+          </div> <!-- column for graph -->
+        </div> <!-- row for graph -->
     </div> <!--column -->
 
-  <div class="col-sm-6" id="control-div">
+  <div class="col-md-6" id="control-div">
     <h2> Controls </h2>
-    <div class="container">
+    <!-- <div class="container"> -->
       <div class="row">
-   <div class="btn-group col-sm-6" role="group" aria-label="Connect group">
+   <div class="btn-group col-md-12" role="group" aria-label="Connect group">
      <button type="button" class="btn btn-primary btn-lg" id="connect-btn">
       Connect
       </button>
@@ -34,13 +42,13 @@
        </button> </div> <!--button group-->
    </div> <!--inner row-->
    <div class = "row">
-      <div class="btn-group col-sm-6" role="group" aria-label="Number Group">
+      <div class="btn-group col-md-12" role="group" aria-label="Number Group">
         <button type="button" class="btn btn-default btn-lg disabled" id="once-btn">One Reading</button>
         <button type="button" class="btn btn-default btn-lg disabled" id="start-stream-btn">Start Stream</button>
         <button type="button" class="btn btn-default btn-lg disabled" id="stop-stream-btn">Stop Stream</button>
         </div> <!--button group-->
       </div> <!--inner row -->
-      </div> <!-- inner container-->
+      <!-- </div>--> <!-- inner container-->
     </div> <!--column -->
     
 </div> <!-- End row -->
@@ -49,5 +57,6 @@
 {% endblock %}
 
 {% block js %}
+<script src="../static/js/Chart.js"></script>
 <script src="../static/js/sensors.js"></script>
 {% endblock %}

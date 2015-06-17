@@ -15,11 +15,11 @@ class ForceSensor(object):
             self.cal_b = 0
         elif(self.chan_select == 2):
             # 2-3
-            self.calibration_m = 0
-            self.calibration_b = 0
+            self.cal_m = 0
+            self.cal_b = 0
         else:
             # throw error
-            print("forceSensor.py: Invalid channel selection.",file=sys.error)
+            print("forceSensor.py: Invalid channel selection.",file=sys.err)
         self.thread = None
         self.streaming = False
         self.lock = False
@@ -39,17 +39,17 @@ class ForceSensor(object):
             force = _v_to_lbs(self.cal_m,self.cal_b,measured_voltage)
         else:
             force = None
-            print("forceSensor.py: getForce, spi not connected.",file=sys.stderror)
+            print("forceSensor.py: getForce, spi not connected.",file=sys.stderr)
         return force
 
-    def start_stream(self):
+    def streamStart(self):
         if (not self.streaming and not self.lock and self.connected):
             self.lock = True
             self.thread = _ThreadRead_(self.chan_select,self.spi)
             self.thread.start()
             self.streaming = True
 
-    def stop_stream(self):
+    def streamStop(self):
         if self.streaming:
             self.streaming = False
             data = self.thread.stop()
@@ -106,7 +106,7 @@ class _ThreadRead_(threading.Thread):
         while(not self.stop_event.is_set()):
             # read values until stop is sent
             response = _read_once(self.chan_select,self.spi)
-            print(response)
+            #print(response)
             self.data.append(response) # Push response to the data list for later
             sleep(0.0001) # I should be bigger....
         return
@@ -119,7 +119,7 @@ class _ThreadRead_(threading.Thread):
 if __name__ == "__main__":
     sensor = ForceSensor(1)
     sensor.connect()
-    sensor.start_stream()
+    sensor.streamStart()
     sleep(0.1)
-    sensor.stop_stream()
+    sensor.streamStop()
         
