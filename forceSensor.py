@@ -35,6 +35,11 @@ class ForceSensor(object):
             self.spi = spidev.SpiDev()
             self.spi.open(1,0)
 
+    def disconnect(self):
+        if self.connected:
+            self.connected = False
+            self.spi.close()
+
     def getForce(self):
         """Gets a force once."""
         if self.connected:

@@ -5,25 +5,6 @@
 */
 
 /* Helper functions. */
-function round(value, exp) {
-    /*From: http://stackoverflow.com/questions/1726630/javascript-formatting-number-with-exactly-two-decimals */
-      if (typeof exp === 'undefined' || +exp === 0)
-              return Math.round(value);
-
-      value = +value;
-      exp  = +exp;
-
-      if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0))
-              return NaN;
-
-      // Shift
-      value = value.toString().split('e');
-      value = Math.round(+(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp)));
-
-      // Shift back
-      value = value.toString().split('e');
-      return +(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp));
-}
 
 var popToFront = function (firstelem, array) {
     array.unshift(firstelem);
@@ -115,14 +96,36 @@ $(function () {
                       popToFront('Drop Distance', data.result.range_vals.d),
                       popToFront('Cone Force', data.result.cone_vals.d),
                       popToFront('Sleeve Friction', data.result.donut_vals.d)
-                  ]
+                  ],
+                   axes: {
+                       'Drop Distance': 'y',
+                       'Cone Force': 'y2',
+                       'Sleeve Friction': 'y2'
+                       }
                   },
                axis: {
                    x: {
                        tick: {
                              count: 10,
-                             format: function(x) {return round(x).toFixed(2)}
-                           }
+                             format: function(x) {return x.toFixed(2)}
+                           },
+                       label: {
+                           text: 'Time After Connection (s)',
+                           position: 'outer-center'
+                          },
+                       },
+                   y: {
+                       label: {
+                           text: 'Drop depth (in)',
+                           position: 'outer-middle'
+                           },
+                       },
+                   y2: {
+                       show: true,
+                       label: {
+                           text: 'Force (V)',
+                           position: 'outer-middle'
+                          },
                        }
                    }
                });
