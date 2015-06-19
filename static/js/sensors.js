@@ -46,7 +46,7 @@ $(function () {
 
 //Start Streaming
 /*This should probably be error checked somehow, if for example, the server
- up chucks.*/
+    fail. */
 $(function () {
     $('#start-stream-btn').bind('click',function () {
         console.log("Start stream button go hit.");
@@ -64,42 +64,31 @@ $(function () {
 
 //Stop Streaming
 $(function () {
-    var ctx = $("#chart").get(0).getContext("2d");
     $('#stop-stream-btn').bind('click',function () {
         console.log("Stop button got hit!");
         $.getJSON($SCRIPT_ROOT + '/_get_range_vals',{
             option: "stream_stop"
        }, function(data) {
-           var chartData = {
-               labels: [" ", " ", " ", " ", " ", " ", " "],
-               datasets: [
-                   {
-                       label: "Cone",
-                       data: data.result.cone_vals,
-                       fillColor: "rgba(220,220,220,0.2)",
-                       strokeColor: "rgba(220,220,220,1)",
-                       pointColor: "rgba(220,220,220,1)",
-                       pointStrokeColor: "#fff",
-                       pointHighlightFill: "#fff",
-                       pointHighlightStroke: "rgba(220,220,220,1)"
-                       },
-                   {
-                       label: "Donut",
-                       data: data.result.donut_vals,
-                       fillColor: "rgba(151,187,205,0.2)",
-                       strokeColor: "rgba(151,187,205,1)",
-                       pointColor: "rgba(151,187,205,1)",
-                       pointStrokeColor: "#fff",
-                       pointHighlightFill: "#fff",
-                       pointHighlightStroke: "rgba(151,187,205,1)"
-                       },
-                   {
-                       label: "Range",
-                       data: data.result.range_vals
-                       }
-                   ]
-               };
-           var myLineChart = new Chart(ctx).Line(chartData);
+           var chart = c3.generate({
+               bindto: "#chart",
+               data: {
+                   xs: {
+                       'Drop Distance':'distance_t',
+                       'Cone Force':'cone_t',
+                       'Sleeve Friction':'donut_t',
+                   },
+                  columns: [
+                      ['distance_t', data.result.range_vals.t],
+                      ['cone_t', data.result.cone_vals.t],
+                      ['donut_t', data.result.donut_vals.t],
+
+                      ['Drop Distance', data.result.donut_vals.d],
+                      ['Cone Force', data.result.donut_vals.d],
+                      ['Sleeve Friction', data.result.donut_vals.d],
+
+                  ]
+                  }
+               });
            $('#start-stream-btn').text('Start Stream');
            $('#start-stream-btn').removeClass('disabled');
            $('#once-btn').removeClass('disabled');

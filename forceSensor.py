@@ -2,6 +2,7 @@ from __future__ import print_function
 import sys
 import spidev
 from time import sleep
+import time
 import threading
 
 V_ref = 4.93# I need a more constant reference voltage...
@@ -25,10 +26,12 @@ class ForceSensor(object):
         self.lock = False
         self.spi = None
         self.connected = False # instead of this, just check for truthiness of self.spi?
+        self.connect_time = None
 
     def connect(self):
         if not self.connected:
             self.connected = True
+            self.connect_time = time.time()
             self.spi = spidev.SpiDev()
             self.spi.open(1,0)
 
@@ -50,11 +53,13 @@ class ForceSensor(object):
             self.streaming = True
 
     def streamStop(self):
+        values = {"t": [], "d": []}
         if self.streaming:
             self.streaming = False
             data = self.thread.stop()
             self.lock = False
-            values = [_v_to_lbs(self.cal_m,self.cal_b,x) for x in data]
+            values["t"] = [x - self.connect_time for x in data["t"]]
+            values["d"] = [_v_to_lbs(self.cal_m,self.cal_b,x) for x in data["d"]]
         else:
             values = None
         return values
@@ -99,7 +104,7 @@ class _ThreadRead_(threading.Thread):
         self.chan_select = chan_select
         self.spi = spi
         self.stop_event = threading.Event()
-        self.data = []
+        self.data = {"t": [], "d": []}
 
     def run(self):
         """run is the function ran by the thread"""
@@ -107,7 +112,8 @@ class _ThreadRead_(threading.Thread):
             # read values until stop is sent
             response = _read_once(self.chan_select,self.spi)
             #print(response)
-            self.data.append(response) # Push response to the data list for later
+            self.data["d"].append(response) # Push response to the data list for later
+            self.data["t"].append(time.time())
             sleep(0.0001) # I should be bigger....
         return
 
@@ -121,5 +127,5 @@ if __name__ == "__main__":
     sensor.connect()
     sensor.streamStart()
     sleep(0.1)
-    sensor.streamStop()
+    print(sensor.streamStop())
         

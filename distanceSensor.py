@@ -2,6 +2,7 @@ from __future__ import print_function
 import sys
 import serial
 from time import sleep #because flush is non blocking?
+import time
 import threading
 from Queue import Queue
 
@@ -32,7 +33,7 @@ class _ThreadRead_(threading.Thread):
         threading.Thread.__init__(self)
         self.serial = serial
         self.stop_event = threading.Event()
-        self.data = []
+        self.data = {"t": [ ], "d": [ ]}
 
     def run(self):
         """run is the function ran by the thread"""
@@ -43,7 +44,8 @@ class _ThreadRead_(threading.Thread):
         while(not self.stop_event.is_set()):
             # read values until stop is sent
             response = self.serial.readline() # reads until EOL
-            self.data.append(response) # Push response to the data list for later
+            self.data["t"].append(time.time())
+            self.data["d"].append(response) # Push response to the data list for later
         return
 
     def stop(self):
@@ -59,6 +61,7 @@ class DistanceSensor(object):
         self.serial = None
         self.streaming = False
         self.lock = False
+        self.connect_time = None
 
     def connect(self):
         """Does the connection."""
@@ -69,6 +72,7 @@ class DistanceSensor(object):
                 print("distanceSensor.py: Could not connect to serial port.", file=sys.stderr)
             else:
                 self.connected = True
+                self.connect_time = time.time()
         else:
             pass
 
@@ -122,28 +126,33 @@ class DistanceSensor(object):
 
     def streamStop(self):
         """Stops the streaming and returns the values from it."""
+        values = {"t": [], "d": []}
+        bigTime = []
         if self.streaming:
             self.streaming = False
             data = self.thread.stop()
             self.serial.write('t\r\n') # tell the handset to stop sending
             self.lock = False
-            values = [interp_response(x) for x in data if valid_response(x)]
+            for i in range(0, len(data["d"])):
+                if valid_response(data["d"][i]):
+                    values["d"].append(interp_response(data["d"][i]))
+                    bigTime.append(data["t"][i])
+            values["t"] = [x - self.connect_time for x in bigTime] #convert epoch times to reasonable times
+            #values = [interp_response(x) for x in data if valid_response(x)] # RIP magical one liner
         else:
             values = None
         return values
 
 if __name__ == '__main__':
-    #mySensor = DistanceSensor('/dev/cu.usbmodem1421')
-    mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
+    mySensor = DistanceSensor('/dev/cu.usbmodem1421')
+    #mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
     mySensor.connect()
     #sleep(2) # Arduino is stupid
     while True:
         if mySensor.isAlive():
             print(mySensor.getDistance())
             mySensor.streamStart()
-            sleep(5)
-            mySensor.getDistance()
-            sleep(5)
+            sleep(2)
             print(mySensor.streamStop())
             break
         else:

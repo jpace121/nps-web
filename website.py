@@ -42,10 +42,11 @@ def get_range_values_get():
             response = "stream_started"
     elif option == "stream_stop":
         response = {}
+        # these all have d's and t's which should be pushed to the
+        # client for free....
         response['range_vals'] = range_finder.streamStop()
         response['cone_vals'] = cone_sensor.streamStop()
         response['donut_vals'] = donut_sensor.streamStop()
-        
     elif option == "once":
         response = {}
         response['range'] = None
