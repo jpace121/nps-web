@@ -28,8 +28,9 @@ def get_range_values_get():
     global range_finder
     option = request.args.get('option','None')
     if option == "stream_start":
-        while not range_finder.isAlive():
-            sleep(1)
+        if not range_finder.streaming:
+            while not range_finder.isAlive():
+                sleep(1)
         if not range_finder.streaming:
             range_finder.streamStart()
         if not donut_sensor.streaming:

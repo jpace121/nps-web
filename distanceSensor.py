@@ -101,6 +101,9 @@ class DistanceSensor(object):
         """Tells if hanset is reponsive. Call before calling any other
            method. It is the only method that checks..."""
         resp = None
+        if(self.lock):
+            # If I'm locked I was alive before, and we can assume I'm still alive.
+            resp = True
         if(self.connected and not self.lock):
             # Send command
             self.lock = True
