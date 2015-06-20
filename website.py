@@ -4,6 +4,7 @@ from forceSensor import ForceSensor
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash, jsonify
 from time import sleep
+import json
 
 app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
