@@ -63,15 +63,13 @@ def get_range_values_get():
     elif option == "connect":
         if not range_finder.connected:
             range_finder.connect()
-            response = "connected"
         if not donut_sensor.connected and not cone_sensor.connected:
             donut_sensor.connect()
             cone_sensor.connect()
-            response = "connected"
-        if not range_finder.connected and not cone_sensor.connected and not donut_sensor.connected:
-            response = "error"
         if range_finder.connected and cone_sensor.connected and donut_sensor.connected:
             response = "connected"
+        else:
+            response = "error"
     elif option == "disconnect":
         if range_finder.connected:
             range_finder.disconnect()
