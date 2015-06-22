@@ -1,13 +1,15 @@
 from __future__ import print_function
 import sys
-import spidev
 from time import sleep
 import time
 import threading
+from ADCChip import ADCChip
 
 V_ref = 4.93# I need a more constant reference voltage...
+the_chip = ADCChip() # there is only one chip, so only one spi connection
 
 class ForceSensor(object):
+    """This object represents a single force sensor. """
     def __init__(self,chan_select):
         self.chan_select = chan_select # 1 for 0-1, 2 for 2-3
         if(self.chan_select == 1):
@@ -24,7 +26,7 @@ class ForceSensor(object):
         self.thread = None
         self.streaming = False
         self.lock = False
-        self.spi = None
+        self.spi = the_chip
         self.connected = False # instead of this, just check for truthiness of self.spi?
         self.connect_time = None
 
@@ -32,8 +34,7 @@ class ForceSensor(object):
         if not self.connected:
             self.connected = True
             self.connect_time = time.time()
-            self.spi = spidev.SpiDev()
-            self.spi.open(1,0)
+            self.spi.connect()
 
     def disconnect(self):
         if self.connected:
@@ -128,9 +129,15 @@ class _ThreadRead_(threading.Thread):
         return self.data
         
 if __name__ == "__main__":
-    sensor = ForceSensor(1)
-    sensor.connect()
-    sensor.streamStart()
+    sensor1 = ForceSensor(1)
+    sensor2 = ForceSensor(2)
+    sensor1.connect()
+    sensor2.connect()
+    sensor1.streamStart()
+    sensor2.streamStart()
     sleep(0.001)
-    print(sensor.streamStop())
-        
+    print(sensor1.streamStop())
+    print(sensor2.streamStop())
+    sensor1.disconnect()
+    sensor2.disconnect()
+    print(the_chip.cnt)
