@@ -8,10 +8,14 @@ from ADCChip import ADCChip
 V_ref = 4.93# I need a more constant reference voltage...
 the_chip = ADCChip() # there is only one chip, so only one spi connection
 
+# Using Ch0 and Ch1 for one sensor and Ch6 and Ch7 for the other one
+# (on the ADC). Ch 2 and Ch3 do not seem to diff. This may be a programming
+# thing or it may be my wiring, or it may be the ADC is bad....
+
 class ForceSensor(object):
     """This object represents a single force sensor. """
     def __init__(self,chan_select):
-        self.chan_select = chan_select # 1 for 0-1, 2 for 2-3
+        self.chan_select = chan_select # 1 for 0-1, 2 for 6-7
         if(self.chan_select == 1):
             # 0-1
             self.cal_m = 0
@@ -77,14 +81,14 @@ class ForceSensor(object):
 def _read_once(chan_set,spi):
     """Measure the differential voltage once. At channel "chan_set".
          - chan_set 1 => Ch0+ Ch1-
-         - chan_set 2 => Ch2+ Ch3-
+         - chan_set 2 => Ch7+ Ch7-
     """
     global V_ref
     # What channel do you want?
     if chan_set == 1:
         to_send = [ 0b00000100,0b00000000,0]
     elif chan_set == 2:
-        to_send = [ 0b00000111,0b10000000,0]
+        to_send = [ 0b00000101,0b10000000,0]
     else:
         # Hey, an unneccessary error check!
         to_send = [0,0,0] # aka do nothing
