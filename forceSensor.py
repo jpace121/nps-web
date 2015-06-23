@@ -84,7 +84,7 @@ def _read_once(chan_set,spi):
     if chan_set == 1:
         to_send = [ 0b00000100,0b00000000,0]
     elif chan_set == 2:
-        to_send = [ 0b00000100,0b10000000,0]
+        to_send = [ 0b00000111,0b11000000,0]
     else:
         # Hey, an unneccessary error check!
         to_send = [0,0,0] # aka do nothing
