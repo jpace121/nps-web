@@ -5,7 +5,7 @@ import time
 import threading
 from ADCChip import ADCChip
 
-V_ref = 4.93# I need a more constant reference voltage...
+V_ref = 5.# I need a more constant reference voltage...
 the_chip = ADCChip() # there is only one chip, so only one spi connection
 
 # Using Ch0 and Ch1 for one sensor and Ch6 and Ch7 for the other one
