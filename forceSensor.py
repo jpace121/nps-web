@@ -136,7 +136,7 @@ if __name__ == "__main__":
     print(sensor2.getForce())
     sensor1.streamStart()
     sensor2.streamStart()
-    sleep(0.01)
+    sleep(0.001)
     print(sensor1.streamStop())
     print(sensor2.streamStop())
     sensor1.disconnect()
