@@ -16,6 +16,7 @@ def makeDataFileName():
 
 def jsonToCSV(json_file):
    # this is nonoptimal and prbably overly slow...
+   # it's also ugly...
    with open("./logs/" + makeDataFileName(),"w") as csv_file:
         csv_writer = csv.writer(csv_file)
         # write first row
@@ -24,13 +25,16 @@ def jsonToCSV(json_file):
             for second_key in json_file[first_key].keys():
                 head_row.append(first_key + "_" + second_key)
         csv_writer.writerow(head_row)
-        # Now form each data row.
-        while not at last elem of longest list:
-            for first_key in json_file.keys():
-                row = []
-                for second_key in json_file[first_key].keys():
-                    row.append(json_file[first_key][second_key])
-            csv_writer.writerow(row)
+        # Make sure each column is the same lenght, where data is not
+        # write a " " char.
+        lens = {}
+        for first_key in json_file.keys():
+           for second_key in json_file[first_key].keys():
+              lens[first_key+","+second_key] = len(json_file[first_key][second_key])
+        for key in lens.keys(): 
+            if lens[key] < max(lens.values()):
+               
+               
          
 
 if __name__ == "__main__":
