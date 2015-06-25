@@ -3,6 +3,7 @@ import csv
 from pprint import pprint # for testing
 import time
 import datetime
+import numpy as np
 
 """
 Converts a json file created by the website.py website into a csv file
@@ -17,25 +18,15 @@ def makeDataFileName():
 def jsonToCSV(json_file):
    # this is nonoptimal and prbably overly slow...
    # it's also ugly...
-   with open("./logs/" + makeDataFileName(),"w") as csv_file:
-        csv_writer = csv.writer(csv_file)
-        # write first row
-        head_row = []
-        for first_key in json_file.keys():
-            for second_key in json_file[first_key].keys():
-                head_row.append(first_key + "_" + second_key)
-        csv_writer.writerow(head_row)
-        # Make sure each column is the same lenght, where data is not
-        # write a " " char.
-        lens = {}
-        for first_key in json_file.keys():
-           for second_key in json_file[first_key].keys():
-              lens[first_key+","+second_key] = len(json_file[first_key][second_key])
-        for key in lens.keys(): 
-            if lens[key] < max(lens.values()):
-               
-               
+   # Step 1, remove a layer of nodes.
+   big_dict = {}
+   for first_key in json_file.keys():
+      for second_key in json_file[first_key].keys():
+         big_dict[first_key+"_"+second_key] = json_file[first_key][second_key]
          
+   # Step 2: Write header
+   
+   np.savetxt(makeDataFileName(),big_dict)
 
 if __name__ == "__main__":
     with open('./test.json','r') as f:
