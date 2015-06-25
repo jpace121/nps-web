@@ -1,4 +1,31 @@
 {% extends "base.html" %}
-{% block content %}
 
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+      <h2>Controls </h2>
+        <div class="btn-group col-md-12" role="group" aria-label="Controls Group">
+          <button type="button" class="btn btn-lg" onclick="window.open('/log_files','_blank')" id="download-btn">
+            Download
+            </button> <!--Download-->
+          <button type="button" class="btn btn-lg" id="delete-btn">
+            Delete
+            </button> <!--Delete-->
+          <button type="button" class="btn btn-lg" id="update-btn">
+            Update List
+            </button> <!--Update-->
+          </div> <!--button column-->
+</div> <!-- End row -->
+<div class="row">
+  <h2>Available Files </h2>
+ <ul id="file-list">
+   </ul>
+  
+  </div> <!-- End row -->
+{% endblock %}
+
+{% block js %}
+    <script src="../static/js/downloads.js"></script>
 {% endblock %}

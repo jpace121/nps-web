@@ -2,8 +2,9 @@ from __future__ import print_function
 from distanceSensor import DistanceSensor
 from forceSensor import ForceSensor
 from flask import Flask, request, session, g, redirect, url_for, \
-    abort, render_template, flash, jsonify
+    abort, render_template, flash, jsonify, send_file
 from time import sleep
+import saveTocsv as tocsv
 import json
 
 app = Flask(__name__)
@@ -27,6 +28,8 @@ def sensors_html():
 @app.route('/_get_range_vals') #I may want to make this a post instead of get?
 def get_range_values_get():
     global range_finder
+    global cone_sensor
+    global donut_sensor
     option = request.args.get('option','None')
     if option == "stream_start":
         if not range_finder.streaming:
@@ -49,6 +52,8 @@ def get_range_values_get():
         response['range_vals'] = range_finder.streamStop()
         response['cone_vals'] = cone_sensor.streamStop()
         response['donut_vals'] = donut_sensor.streamStop()
+        jsoned = json.dumps(response)
+        tocsv.jsonToCSV(jsoned)
     elif option == "once":
         response = {}
         response['range'] = None
@@ -89,6 +94,22 @@ def get_range_values_get():
 def downloads_html():
     return render_template('downloads.html')
 
+@app.route('/_get_downloads')
+def _get_dowloads_html():
+    option = request.args.get('option','None')
+    if option == "update":
+        response = tocsv.get_file_list()
+    elif option == "delete":
+        tocsv.delete_files()
+        response = "delete"
+    else:
+        response = "error"
+    return jsonify(result=response)
+
+@app.route('/log_files')
+def _get_file():
+    return send_file(tocsv.zip_for_download())
+    
 if __name__ == '__main__':
     app.run()
 
