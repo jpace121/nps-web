@@ -35,11 +35,11 @@ def jsonToCSV(json_file):
    with open(makeDataFileName(),'w') as csv_file:
       writer = csv.writer(csv_file)
       # Step 3: Write first row.
-      writer.writerow(big_dict.keys())
+      writer.writerow(sorted(big_dict.keys(),reverse=True))
       # Step 4: Loop through that number of times. If the value is missing, put a " ".
       for i in range(0,max_len):
          row = []
-         for key in big_dict.keys():
+         for key in sorted(big_dict.keys(),reverse=True):
             try:
                elem = big_dict[key][i]
             except IndexError:
