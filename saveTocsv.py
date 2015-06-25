@@ -1,14 +1,36 @@
 import json
 import csv
-from pprint import pprint # for testing
 import time
 import datetime
-import numpy as np
+import subprocess32 as sub
+import glob
 
 """
 Converts a json file created by the website.py website into a csv file
 which can be read in excel.
+Module also contains the neccessary OS calls to display and delete the
+files from the GUI.
 """
+
+def get_file_list():
+   print_list = sub.check_output(["ls","./logs"]).split("\n")
+   return print_list
+
+def delete_files():
+   to_delete = glob.glob("./logs/*.csv")
+   for file in to_delete:
+      sub.call(["rm",file])
+
+def zip_for_download():
+   print "zip_for_download:"
+   ts = time.time()
+   filename = datetime.datetime.fromtimestamp(ts).strftime('penetrometer_%Y%m%d_%H%M.zip')
+   filepath = "/tmp/"
+   output = sub.call(["zip","-r",filepath+filename,"./logs"])
+   if output == 0:
+      return filepath+filename
+   else:
+      return False
 
 def makeDataFileName():
     # inspired by http://stackoverflow.com/questions/13890935/timestamp-python
@@ -18,8 +40,6 @@ def makeDataFileName():
    return filepath+filename
 
 def jsonToCSV(json_file):
-   # this is nonoptimal and prbably overly slow...
-   # it's also ugly...
    # Step 1, remove a layer of nodes.
    big_dict = {}
    for first_key in json_file.keys():
@@ -48,7 +68,10 @@ def jsonToCSV(json_file):
          writer.writerow(row)
 
 if __name__ == "__main__":
-    with open('./test.json','r') as f:
-        test_json = json.load(f)
-        print makeDataFileName()
-        jsonToCSV(test_json)
+   get_file_list()
+   print(zip_for_download())
+   with open('./test.json','r') as f:
+      test_json = json.load(f)
+      print makeDataFileName()
+      jsonToCSV(test_json)
+   delete_files()
