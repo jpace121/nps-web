@@ -10,12 +10,15 @@ var display_files = function () {
        option: "update"
     }, function(data) {
         console.log(data.result);
-        //$('#file-list').html('<ul> </ul>').text(' ');
+        $('#file-list').empty();
         data.result.forEach(function (curVal, index, array) {
             $('#file-list').append("<p>"+ curVal+"</p>");
         });
     });
 };
+
+/* Run these functions at page load. */
+$(display_files());
 
 /* "Bound to keys" function. */
 //Delete
@@ -27,6 +30,7 @@ $(function () {
        }, function(data) {
            if(data.result !== "error") {
                console.log("Delete Button success.");
+               display_files();
           }else{
               $("#delete-btn").text("Try Again?");
          }
