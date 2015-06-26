@@ -10,8 +10,9 @@ var display_files = function () {
        option: "update"
     }, function(data) {
         console.log(data.result);
+        //$('#file-list').html('<ul> </ul>').text(' ');
         data.result.forEach(function (curVal, index, array) {
-            $('#file-list li:last-child').after('<li>'+curVal+'<\li>');
+            $('#file-list').append("<p>"+ curVal+"</p>");
         });
     });
 };
