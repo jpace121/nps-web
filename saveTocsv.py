@@ -39,9 +39,10 @@ def makeDataFileName():
    filepath = "./logs/"
    return filepath+filename
 
-def jsonToCSV(json_file):
+def jsonToCSV(str_file):
    # Step 1, remove a layer of nodes.
    big_dict = {}
+   json_file = json.loads(str_file)
    for first_key in json_file.keys():
       for second_key in json_file[first_key].keys():
          big_dict[first_key+"_"+second_key] = json_file[first_key][second_key]
