@@ -3,8 +3,6 @@
 # bone-debian-7.8-lxde-4gb-armhf-2015-03-01-4gb.img
 
 # Needs internet access to grab all the stuff from apt
-sudo -u  root  sh << EOF
-
 #From adafruit guide
 ntpdate pool.ntp.org
 apt-get update
@@ -16,13 +14,13 @@ pip install spidev
 pip install virtualenv
 pip install flask
 pip install tornado
+pip install subprocess32
 
 #Bluetooth
-apt-get install bluez-utils bluez # these aren't neccessarily neccessary
+apt-get install -y bluez-utils bluez # these aren't neccessarily neccessary
 #bluez-utils is buggy, bluez is already installed (?)
 #http://blog.sumostyle.net/2009/11/ubuntu-tethering-via-bluetooth-pan/
 
-#To bind serial to bluetooth.
+echo '==> Bind the handset to the serial port.'
 rfcomm bind /dev/rfcomm0 00:13:43:02:34:2E
-EOF
 
