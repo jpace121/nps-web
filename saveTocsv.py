@@ -72,7 +72,7 @@ if __name__ == "__main__":
    get_file_list()
    print(zip_for_download())
    with open('./test.json','r') as f:
-      test_json = json.load(f)
+      test_json = f.read()
       print makeDataFileName()
       jsonToCSV(test_json)
    delete_files()
