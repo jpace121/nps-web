@@ -24,3 +24,5 @@ apt-get install -y bluez-utils bluez # these aren't neccessarily neccessary
 echo '==> Bind the handset to the serial port.'
 rfcomm bind /dev/rfcomm0 00:13:43:02:34:2E
 
+apt-get install -y zip
+
