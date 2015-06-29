@@ -147,7 +147,7 @@ class DistanceSensor(object):
         return values
 
 if __name__ == '__main__':
-    mySensor = DistanceSensor('/dev/cu.usbmodem1421')
+    mySensor = DistanceSensor('/dev/rfcomm0')
     #mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
     mySensor.connect()
     #sleep(2) # Arduino is stupid
