@@ -2,4 +2,4 @@
 *.pyc
 spidev.py
 *.csv
-./static/img/temp.png
+temp.png
