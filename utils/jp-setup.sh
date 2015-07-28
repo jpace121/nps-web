@@ -17,6 +17,7 @@ pip install Adafruit_BBIO
 pip install spidev
 
 apt-get install -y zip # for downloads.html
+apt-get install -y python-matplotlib
 
 echo '==> Install python dependencies.' 
 pip install virtualenv

@@ -10,8 +10,8 @@ def makePlot(data):
     plt.ylabel('Voltage (V)') #this will be a pressure by the time it gets here
     plt.xlabel('Time (s)')
     plt.legend(['Range Values', 'Cone Values', 'Donut Values'],'upper right')
-    plt.savefig('/tmp/temp.png')
-    return '/tmp/temp.png'
+    plt.savefig('/root/python-bluetooth/static/img/temp.png')
+    return '/root/python-bluetooth/static/img/temp.png'
 
 if __name__ == '__main__':
     data = {'range_vals':{"t":[],"d":[]},'cone_vals': {"t":[],"d":[]}, 'donut_vals':{"t":[],"d":[]}}

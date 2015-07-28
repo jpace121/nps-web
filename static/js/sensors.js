@@ -84,7 +84,8 @@ $(function () {
            $('#start-stream-btn').removeClass('disabled');
            $('#once-btn').removeClass('disabled');
            $('#stop-stream-btn').addClass('disabled');
-           $('#chart').src = data.response
+           $('#chart').html('<img src="/static/img/temp.png">')
+           console.log(data.result)
        });
         return false; //to remove the button from hreffing
         });
