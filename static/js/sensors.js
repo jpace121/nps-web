@@ -80,60 +80,11 @@ $(function () {
         $.getJSON($SCRIPT_ROOT + '/_get_range_vals',{
             option: "stream_stop"
        }, function(data) {
-           var chart = c3.generate({
-               bindto: "#chart",
-               data: {
-                   xs: {
-                       'Drop Distance':'distance_t',
-                       'Cone Force':'cone_t',
-                       'Sleeve Friction':'donut_t',
-                   },
-                  columns: [
-                      popToFront('distance_t', data.result.range_vals.t),
-                      popToFront('cone_t', data.result.cone_vals.t),
-                      popToFront('donut_t', data.result.donut_vals.t),
-
-                      popToFront('Drop Distance', data.result.range_vals.d),
-                      popToFront('Cone Force', data.result.cone_vals.d),
-                      popToFront('Sleeve Friction', data.result.donut_vals.d)
-                  ],
-                   axes: {
-                       'Drop Distance': 'y',
-                       'Cone Force': 'y2',
-                       'Sleeve Friction': 'y2'
-                       }
-                  },
-               axis: {
-                   x: {
-                       tick: {
-                             count: 10,
-                             format: function(x) {return x.toFixed(2)}
-                           },
-                       label: {
-                           text: 'Time After Connection (s)',
-                           position: 'outer-center'
-                          },
-                       },
-                   y: {
-                       label: {
-                           text: 'Drop depth (in)',
-                           position: 'outer-middle'
-                           },
-                       },
-                   y2: {
-                       show: true,
-                       label: {
-                           text: 'Force (V)',
-                           position: 'outer-middle'
-                          },
-                       }
-                   }
-               });
            $('#start-stream-btn').text('Start Stream');
            $('#start-stream-btn').removeClass('disabled');
            $('#once-btn').removeClass('disabled');
            $('#stop-stream-btn').addClass('disabled');
-           $('#result').text(data.result);
+           $('#chart').src = data.response
        });
         return false; //to remove the button from hreffing
         });

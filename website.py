@@ -6,6 +6,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from time import sleep
 import saveTocsv as tocsv
 import json
+import makePlot as plot
 
 app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
@@ -46,13 +47,12 @@ def get_range_values_get():
         else:
             response = "stream_started"
     elif option == "stream_stop":
-        response = {}
-        # these all have d's and t's which should be pushed to the
-        # client for free....
-        response['range_vals'] = range_finder.streamStop()
-        response['cone_vals'] = cone_sensor.streamStop()
-        response['donut_vals'] = donut_sensor.streamStop()
-        jsoned = json.dumps(response)
+        data = {}
+        data['range_vals'] = range_finder.streamStop()
+        data['cone_vals'] = cone_sensor.streamStop()
+        data['donut_vals'] = donut_sensor.streamStop()
+        response = plot.makePlot(data)
+        jsoned = json.dumps(data)
         tocsv.jsonToCSV(jsoned)
     elif option == "once":
         response = {}
