@@ -25,6 +25,9 @@ pip install flask
 pip install tornado
 pip install subprocess32
 
+echo '==> Installed device tree overlay.'
+cp ./BB-SPIDEV0-00A0.dtbo /lib/firmware/.
+
 ehco '==> Set up Bluetooth'
 apt-get install -y bluez-utils bluez # these aren't neccessarily neccessary
 #bluez-utils is buggy, bluez is already installed (?)
