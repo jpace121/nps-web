@@ -77,13 +77,15 @@ $(function () {
 $(function () {
     $('#stop-stream-btn').bind('click',function () {
         console.log("Stop button got hit!");
+        $('#stop-stream-btn').text('Waiting...');
+        $('#stop-stream-btn').addClass('disabled');
         $.getJSON($SCRIPT_ROOT + '/_get_range_vals',{
             option: "stream_stop"
        }, function(data) {
            $('#start-stream-btn').text('Start Stream');
            $('#start-stream-btn').removeClass('disabled');
            $('#once-btn').removeClass('disabled');
-           $('#stop-stream-btn').addClass('disabled');
+           $('#stop-stream-btn').text('Stop Stream');
            $('#chart').html('<img class="img-responsive" src="/image/fig">')
            console.log(data.result)
        });
