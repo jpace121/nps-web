@@ -84,7 +84,7 @@ $(function () {
            $('#start-stream-btn').removeClass('disabled');
            $('#once-btn').removeClass('disabled');
            $('#stop-stream-btn').addClass('disabled');
-           $('#chart').html('<img class="img-responsive" src="'+ data.result  + '">')
+           $('#chart').html('<img class="img-responsive" src="/image/fig">')
            console.log(data.result)
        });
         return false; //to remove the button from hreffing

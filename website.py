@@ -17,6 +17,9 @@ range_finder = DistanceSensor('/dev/rfcomm0')
 cone_sensor = ForceSensor(1)
 donut_sensor = ForceSensor(2)
 
+# ugly global variable for the figure to be plotted.
+fig = "  "
+
 @app.route('/')
 @app.route('/index.html')
 def index_html():
@@ -31,6 +34,7 @@ def get_range_values_get():
     global range_finder
     global cone_sensor
     global donut_sensor
+    global fig
     option = request.args.get('option','None')
     if option == "stream_start":
         if not range_finder.streaming:
@@ -51,9 +55,10 @@ def get_range_values_get():
         data['range_vals'] = range_finder.streamStop()
         data['cone_vals'] = cone_sensor.streamStop()
         data['donut_vals'] = donut_sensor.streamStop()
-        response = plot.makePlot(data)
+        fig = plot.makePlot(data)
         jsoned = json.dumps(data)
         tocsv.jsonToCSV(jsoned)
+        response = "stream_stop"
     elif option == "once":
         response = {}
         response['range'] = None
@@ -109,6 +114,11 @@ def _get_dowloads_html():
 @app.route('/log_files')
 def _get_file():
     return send_file(tocsv.zip_for_download())
+
+@app.route('/image/fig')
+def fig_fn():
+    return send_file(fig, mimetype='image/png')
+    
     
 if __name__ == '__main__':
     app.run()

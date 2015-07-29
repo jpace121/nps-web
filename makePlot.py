@@ -2,6 +2,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import random
+from StringIO import StringIO
 
 def makePlot(input):
     # I should calculate frcition ratios in here.
@@ -40,9 +41,11 @@ def makePlot(input):
     plt.ylabel('Voltage (V)') #this will be a pressure by the time it gets here
     plt.xlabel('Time (s)')
     plt.legend(['Range Values', 'Cone Values', 'Donut Values'],'upper right')
-    pathName = "tmp"+str(random.randint(0,100000000)) +".png"
-    plt.savefig('/root/python-bluetooth/static/img/' + pathName)
-    return '/static/img/'+ pathName
+    # from http://stackoverflow.com/questions/20107414/passing-a-matplotlib-figure-to-html-flask
+    img = StringIO()
+    plt.savefig(img)
+    img.seek(0)
+    return img
 
 if __name__ == '__main__':
     data = {'range_vals':{"t":[],"d":[]},'cone_vals': {"t":[],"d":[]}, 'donut_vals':{"t":[],"d":[]}}
