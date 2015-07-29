@@ -3,7 +3,7 @@ from distanceSensor import DistanceSensor
 from forceSensor import ForceSensor
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash, jsonify, send_file
-from time import sleep
+from time import sleep, time
 import saveTocsv as tocsv
 import json
 import makePlot as plot
@@ -12,10 +12,11 @@ app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
 
 # Sensor related gloabl variables
+connect_time = time()
 #range_finder = DistanceSensor('/dev/cu.usbmodem1421')
-range_finder = DistanceSensor('/dev/rfcomm0')
-cone_sensor = ForceSensor(1)
-donut_sensor = ForceSensor(2)
+range_finder = DistanceSensor('/dev/rfcomm0', connect_time)
+cone_sensor = ForceSensor(1, connect_time)
+donut_sensor = ForceSensor(2, connect_time)
 
 # ugly global variable for the figure to be plotted.
 fig = "  "

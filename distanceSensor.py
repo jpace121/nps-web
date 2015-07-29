@@ -59,14 +59,14 @@ class _ThreadRead_(threading.Thread):
         return self.data
 
 class DistanceSensor(object):
-    def __init__(self, fileAddr):
+    def __init__(self, fileAddr,connect_time):
         # Open the serial port for the sensor
         self.connected = False
         self.fileAddr = fileAddr
         self.serial = None
         self.streaming = False
         self.lock = False
-        self.connect_time = None
+        self.connect_time = connect_time
 
     def connect(self):
         """Does the connection."""
@@ -152,7 +152,7 @@ class DistanceSensor(object):
         return values
 
 if __name__ == '__main__':
-    mySensor = DistanceSensor('/dev/rfcomm0')
+    mySensor = DistanceSensor('/dev/rfcomm0',time.time())
     #mySensor = DistanceSensor('/dev/tty.DISTOD3910350799-Serial')
     mySensor.connect()
     #sleep(2) # Arduino is stupid

@@ -14,7 +14,7 @@ the_chip = ADCChip() # there is only one chip, so only one spi connection
 
 class ForceSensor(object):
     """This object represents a single force sensor. """
-    def __init__(self,chan_select):
+    def __init__(self,chan_select,connect_time):
         self.chan_select = chan_select # 1 for 0-1, 2 for 6-7
         if(self.chan_select == 1):
             # 0-1
@@ -32,7 +32,7 @@ class ForceSensor(object):
         self.lock = False
         self.spi = the_chip
         self.connected = False # instead of this, just check for truthiness of self.spi?
-        self.connect_time = None
+        self.connect_time = connect_time
 
     def connect(self):
         if not self.connected:
@@ -133,8 +133,8 @@ class _ThreadRead_(threading.Thread):
         return self.data
         
 if __name__ == "__main__":
-    sensor1 = ForceSensor(1)
-    sensor2 = ForceSensor(2)
+    sensor1 = ForceSensor(1,time.time())
+    sensor2 = ForceSensor(2,time.time())
     sensor1.connect()
     sensor2.connect()
     print(sensor2.getForce())
