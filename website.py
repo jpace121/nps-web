@@ -8,6 +8,7 @@ import saveTocsv as tocsv
 import json
 import makePlot as plot
 from nocache import nocache
+import thread
 
 app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
@@ -59,7 +60,7 @@ def get_range_values_get():
         data['donut_vals'] = donut_sensor.streamStop()
         fig = plot.makePlot(data)
         jsoned = json.dumps(data)
-        tocsv.jsonToCSV(jsoned)
+        thread.start_new_thread(tocsv.jsonToCSV, (jsoned))
         response = "stream_stop"
     elif option == "once":
         response = {}
