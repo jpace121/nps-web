@@ -12,7 +12,7 @@ var display_files = function () {
         console.log(data.result);
         $('#file-list').empty();
         data.result.forEach(function (curVal, index, array) {
-            $('#file-list').append("<p>"+ curVal+"</p>");
+            $('#file-list').append('<a href="'+ $SCRIPT_ROOT +  'log\\' + curVal+'">' + curVal+'<\a></p>');
         });
     });
 };

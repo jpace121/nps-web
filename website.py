@@ -114,9 +114,14 @@ def _get_dowloads_html():
         response = "error"
     return jsonify(result=response)
 
+# For downloading the zip file...
 @app.route('/log_files')
 def _get_file():
     return send_file(tocsv.zip_for_download())
+
+@app.route('/log/<filename>')
+def log_get(filename):
+	return send_file(tocsv.get_file(filename))
 
 @app.route('/image/fig')
 @nocache
