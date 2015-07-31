@@ -117,11 +117,11 @@ def _get_dowloads_html():
 # For downloading the zip file...
 @app.route('/log_files')
 def _get_file():
-    return send_file(tocsv.zip_for_download())
+    return send_file(tocsv.zip_for_download(), as_attachment=True)
 
 @app.route('/log/<filename>')
 def log_get(filename):
-	return send_file(tocsv.get_file(filename))
+	return send_file(tocsv.get_file(filename), as_attachment=True)
 
 @app.route('/image/fig')
 @nocache

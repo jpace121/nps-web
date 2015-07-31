@@ -43,7 +43,6 @@ def makeDataFileName():
    filepath = "/root/python-bluetooth/logs/" #use environment variable?
    return filepath+filename
 
-#       return send_file(tocsv.get_file(filename))
 def get_file(filename):
     return "/root/python-bluetooth/logs/" + filename 
 
