@@ -5,7 +5,7 @@ import random
 from StringIO import StringIO
 
 def makePlot(input):
-    # I should calculate frcition ratios in here.
+    # I should calculate friction ratios in here.
     # This is a way to catch for when the data does not exist. It is slightly
     # convoluted.
     data = {'range_vals':{"t":[],"d":[]},'cone_vals': {"t":[],"d":[]}, 'donut_vals':{"t":[],"d":[]}}
@@ -35,16 +35,18 @@ def makePlot(input):
     except (KeyError, TypeError):
         data["donut_vals"]["d"] = []
 
+    # Actual Plotting Here
     plt.clf() # clear figure
-    plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r--',
-             data["cone_vals"]["t"],data["cone_vals"]["d"],'b--',
-             data["donut_vals"]["t"],data["donut_vals"]["d"],'g--')
+    plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r.-')
+    plt.plot(data["cone_vals"]["t"],data["cone_vals"]["d"],'b.-')
+    plt.plot(data["donut_vals"]["t"],data["donut_vals"]["d"],'g.-')
     plt.ylabel('Voltage (V)') #this will be a pressure by the time it gets here
     plt.xlabel('Time (s)')
-    plt.legend(['Range Values', 'Cone Values', 'Donut Values'],'lower right')
+    plt.legend(["Range Values", "Cone Values", "Donut Values"], 'lower right')
     # from http://stackoverflow.com/questions/20107414/passing-a-matplotlib-figure-to-html-flask
     img = StringIO()
-    plt.savefig(img)
+    plt.savefig(img) # for production
+    #plt.savefig('/tmp/test.png') # for debug only
     img.seek(0)
     return img
 
@@ -53,8 +55,8 @@ if __name__ == '__main__':
     #data = {'range_vals':{"t":[],"d":[]},'cone_vals': {"t":[],"d":[]}}
     data["range_vals"]["t"] = [0,1,2,3]
     data["range_vals"]["d"] = [0,1,2,3]
-    data["cone_vals"]["t"] = [0,1,2,3]
-    data["cone_vals"]["d"] = [0,1,4,9]
-    data["donut_vals"]["t"] = [0,1,2,3]
-    data["donut_vals"]["d"] = [0,1,8,27]
-    print makePlot(data)
+    data["cone_vals"]["t"] = [0,1,2,3,4,5]
+    data["cone_vals"]["d"] = [0,1,4,9,15,25]
+    data["donut_vals"]["t"] = [0,1,2,3,4,5]
+    data["donut_vals"]["d"] = [0,1,8,27,64,125]
+    makePlot(data)
