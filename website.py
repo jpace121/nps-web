@@ -13,12 +13,18 @@ import thread
 app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
 
-# Sensor related gloabl variables
+# Sensor related global variables
 connect_time = time()
 #range_finder = DistanceSensor('/dev/cu.usbmodem1421')
 range_finder = DistanceSensor('/dev/rfcomm0', connect_time)
 cone_sensor = ForceSensor(1, connect_time)
 donut_sensor = ForceSensor(2, connect_time)
+
+# Global variable to maintain the state of the app.
+# Neccessary so on page reloads can be grabbed by js.
+# This is only used for maintaining the GUI, does not effect the operation 
+# of the application.
+app_status = {"connected":False, "streaming":False}
 
 # ugly global variable for the figure to be plotted.
 fig = "  "
@@ -38,6 +44,7 @@ def get_range_values_get():
     global cone_sensor
     global donut_sensor
     global fig
+    global app_status
     option = request.args.get('option','None')
     if option == "stream_start":
         if not range_finder.streaming:
@@ -53,15 +60,18 @@ def get_range_values_get():
             response = "error"
         else:
             response = "stream_started"
+            app_status["streaming"] = True
     elif option == "stream_stop":
         data = {}
         data['range_vals'] = range_finder.streamStop()
         data['cone_vals'] = cone_sensor.streamStop()
         data['donut_vals'] = donut_sensor.streamStop()
-        fig = plot.makePlot(data)
+        if app_status["streaming"]: #only update fig if I was streaming
+            fig = plot.makePlot(data)
         jsoned = json.dumps(data)
         thread.start_new_thread(tocsv.jsonToCSV, (jsoned,))
         response = "stream_stop"
+        app_status["streaming"] = False
     elif option == "once":
         response = {}
         response['range'] = None
@@ -81,6 +91,7 @@ def get_range_values_get():
             cone_sensor.connect()
         if range_finder.connected and cone_sensor.connected and donut_sensor.connected:
             response = "connected"
+            app_status["connected"] = True
         else:
             response = "error"
     elif option == "disconnect":
@@ -92,8 +103,11 @@ def get_range_values_get():
             cone_sensor.disconnect()
         if not cone_sensor.connected and not cone_sensor.connected and not donut_sensor.connected:
             response = "disconnected"
+            app_status["connected"] = False
         else:
             response = "error"
+    elif option == "get_status":
+        response = app_status
     else:
         response = "error"
     return jsonify(result=response)
