@@ -17,8 +17,7 @@ app.config['DEBUG'] = True # should be False in production
 connect_time = time()
 #range_finder = DistanceSensor('/dev/cu.usbmodem1421')
 range_finder = DistanceSensor('/dev/rfcomm0', connect_time)
-cone_sensor = ForceSensor(1, connect_time)
-donut_sensor = ForceSensor(2, connect_time)
+force_sensor = ForceSensor(connect_time)
 
 # Global variable to maintain the state of the app.
 # Neccessary so on page reloads can be grabbed by js.
@@ -41,8 +40,7 @@ def sensors_html():
 @app.route('/_get_range_vals') #I may want to make this a post instead of get?
 def get_range_values_get():
     global range_finder
-    global cone_sensor
-    global donut_sensor
+    global force_sensor
     global fig
     global app_status
     option = request.args.get('option','None')
@@ -52,11 +50,9 @@ def get_range_values_get():
                 sleep(0.1)
         if not range_finder.streaming:
             range_finder.streamStart()
-        if not donut_sensor.streaming:
-            donut_sensor.streamStart()
-        if not cone_sensor.streaming:
-            cone_sensor.streamStart()
-        if not range_finder.streaming or not donut_sensor.streaming or not cone_sensor.streaming:
+        if not force_sensor.streaming:
+            force_sensor.streamStart()
+        if not range_finder.streaming or not force_sensor.streaming:
             response = "error"
         else:
             response = "stream_started"
@@ -64,8 +60,7 @@ def get_range_values_get():
     elif option == "stream_stop":
         data = {}
         data['range_vals'] = range_finder.streamStop()
-        data['cone_vals'] = cone_sensor.streamStop()
-        data['donut_vals'] = donut_sensor.streamStop()
+        (data['cone_vals'], data['donut_vals']) = force_sensor.streamStop()
         if app_status["streaming"]: #only update fig if I was streaming
             fig = plot.makePlot(data)
         jsoned = json.dumps(data)
@@ -75,8 +70,7 @@ def get_range_values_get():
     elif option == "once":
         response = {}
         response['range'] = None
-        response['cone_force'] = cone_sensor.getForce()
-        response['donut_force'] = donut_sensor.getForce()
+        (response['cone_force'], response['donut_force']) = force_sensor.getForce()
         while True:
             if range_finder.isAlive():
                 response['range'] = range_finder.getDistance()
@@ -86,10 +80,9 @@ def get_range_values_get():
     elif option == "connect":
         if not range_finder.connected:
             range_finder.connect()
-        if not donut_sensor.connected and not cone_sensor.connected:
-            donut_sensor.connect()
-            cone_sensor.connect()
-        if range_finder.connected and cone_sensor.connected and donut_sensor.connected:
+        if not force_sensor.connected:
+            force_sensor.connect()
+        if range_finder.connected and force_sensor.connected:
             response = "connected"
             app_status["connected"] = True
         else:
@@ -97,11 +90,9 @@ def get_range_values_get():
     elif option == "disconnect":
         if range_finder.connected:
             range_finder.disconnect()
-        if donut_sensor.connected:
-            donut_sensor.disconnect()
-        if cone_sensor.connected:
-            cone_sensor.disconnect()
-        if not cone_sensor.connected and not cone_sensor.connected and not donut_sensor.connected:
+        if force_sensor.connected:
+            force_sensor.disconnect()
+        if not range_finder.connected and not force_sensor.connected:
             response = "disconnected"
             app_status["connected"] = False
         else:
@@ -135,7 +126,7 @@ def _get_file():
 
 @app.route('/log/<filename>')
 def log_get(filename):
-	return send_file(tocsv.get_file(filename), as_attachment=True)
+    return send_file(tocsv.get_file(filename), as_attachment=True)
 
 @app.route('/image/fig')
 @nocache

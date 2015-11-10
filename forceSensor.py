@@ -13,20 +13,15 @@ the_chip = ADCChip() # there is only one chip, so only one spi connection
 # thing or it may be my wiring, or it may be the ADC is bad....
 
 class ForceSensor(object):
-    """This object represents a single force sensor. """
-    def __init__(self,chan_select,connect_time):
-        self.chan_select = chan_select # 1 for 0-1, 2 for 6-7
-        if(self.chan_select == 1):
-            # 0-1
-            self.cal_m = 0
-            self.cal_b = 0
-        elif(self.chan_select == 2):
-            # 6-7
-            self.cal_m = 0
-            self.cal_b = 0
-        else:
-            # throw error
-            print("forceSensor.py: Invalid channel selection.",file=sys.err)
+    """This object represents both force sensors."""
+    def __init__(self,connect_time):
+        # 0-1
+        self.cal_m_1 = 0
+        self.cal_b_1 = 0
+        # 6-7
+        self.cal_m_2 = 0
+        self.cal_b_2 = 0
+        
         self.thread = None
         self.streaming = False
         self.lock = False
@@ -48,31 +43,38 @@ class ForceSensor(object):
     def getForce(self):
         """Gets a force once."""
         if self.connected:
-            measured_voltage = _read_once(self.chan_select,self.spi)
-            force = _v_to_lbs(self.cal_m,self.cal_b,measured_voltage)
+            measured_voltage1 = _read_once(1,self.spi)
+            measured_voltage2 = _read_once(1,self.spi)
+            force1 = _v_to_lbs(self.cal_m_1,self.cal_b_1,measured_voltage1)
+            force2 = _v_to_lbs(self.cal_m_2,self.cal_b_2,measured_voltage2)
         else:
-            force = None
+            force1 = None
+            force2 = None
             print("forceSensor.py: getForce, spi not connected.",file=sys.stderr)
-        return force
+        return (force1, force2)
 
     def streamStart(self):
         if (not self.streaming and not self.lock and self.connected):
             self.lock = True
-            self.thread = _ThreadRead_(self.chan_select,self.spi)
+            self.thread = _ThreadRead_(self.spi)
             self.thread.start()
             self.streaming = True
 
     def streamStop(self):
-        values = {"t": [], "d": []}
+        values1 = {"t": [], "d": []}
+        values2 = {"t": [], "d": []}
         if self.streaming:
             self.streaming = False
-            data = self.thread.stop()
+            (data1, data2) = self.thread.stop()
             self.lock = False
-            values["t"] = [x - self.connect_time for x in data["t"]]
-            values["d"] = [_v_to_lbs(self.cal_m,self.cal_b,x) for x in data["d"]]
+            values1["t"] = [x - self.connect_time for x in data1["t"]]
+            values2["t"] = [x - self.connect_time for x in data2["t"]]
+            values1["d"] = [_v_to_lbs(self.cal_m_1,self.cal_b_1,x) for x in data1["d"]]
+            values2["d"] = [_v_to_lbs(self.cal_m_2,self.cal_b_2,x) for x in data2["d"]]
         else:
-            values = None
-        return values
+            values1 = None
+            values2 = None
+        return (values1, values2)
 
     def __del__(self):
         if(self.connected):
@@ -109,63 +111,41 @@ def _v_to_lbs(slope,offset,V):
 class _ThreadRead_(threading.Thread):
     """Reads values from sensor in its streaming mode in
        a separate thread."""
-    def __init__(self,chan_select,spi):
+    def __init__(self,spi):
         threading.Thread.__init__(self)
-        self.chan_select = chan_select
         self.spi = spi
         self.stop_event = threading.Event()
-        self.data = {"t": [], "d": []}
+        self.data1 = {"t": [], "d": []}
+        self.data2 = {"t": [], "d": []}
 
     def run(self):
         """run is the function ran by the thread"""
         while(not self.stop_event.is_set()):
             # read values until stop is sent
-            response = _read_once(self.chan_select,self.spi)
+            response1 = _read_once(1,self.spi)
+            response2 = _read_once(2,self.spi)
             #print(response)
-            self.data["d"].append(response) # Push response to the data list for later
-            self.data["t"].append(time.time())
+            self.data1["d"].append(response1) # Push response to the data list for later
+            self.data2["d"].append(response2) # Push response to the data list for later
+            curTime = time.time()
+            self.data1["t"].append(curTime)
+            self.data2["t"].append(curTime)
             #sleep(0.0001) # I need to be small enough to capture peaks.
         return
 
     def stop(self):
         """When called, stops the while loop in the thread"""
         self.stop_event.set()
-        return self.data
+        return (self.data1, self.data2)
 
-def _orig_test_():
-    """Original test code from end of summer 2015. Looks like it prints
-       readings and checks to make sure the chip.cnt is accruately 
-       controlled."""
-    sensor1 = ForceSensor(1,time.time())
-    sensor2 = ForceSensor(2,time.time())
-    sensor1.connect()
-    sensor2.connect()
-    print(sensor2.getForce())
-    sensor1.streamStart()
-    sensor2.streamStart()
-    sleep(0.1)
-    print(sensor1.streamStop())
-    print(sensor2.streamStop())
-    sensor1.disconnect()
-    print(the_chip.cnt)
-    sensor1.streamStart()
-    sensor2.streamStart()
-    sensor1.streamStart()
-    sensor2.streamStart()
-    sleep(0.1)
-    print(sensor1.streamStop())
-    print(sensor2.streamStop())
-        
 if __name__ == "__main__":
-    sensor1 = ForceSensor(1,time.time())
-    sensor2 = ForceSensor(2,time.time())
-    sensor1.connect()
-    sensor2.connect()
-    print(sensor2.getForce())
-    sensor1.streamStart()
-    sensor2.streamStart()
-    sleep(1)
+    sensor = ForceSensor(time.time())
+    sensor.connect()
+    print(sensor.getForce())
+    sensor.streamStart()
+    sleep(0.00000000001)
     print("Sample Freq:")
-    print(len(sensor1.streamStop()["d"]))
-    print(len(sensor2.streamStop()["d"]))
+    (sensor1, sensor2) = sensor.streamStop()
+    print(sensor1["d"])
+    print(sensor2["d"])
     
