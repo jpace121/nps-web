@@ -7,6 +7,7 @@ class ADCChip(spidev.SpiDev):
         self.connected = False #Am I connected right now?
         self.cnt = 0 #I'm going to have to reference count the closing of the file...
         self.lock = False # Are communications paused right now?
+        self.toggle = 1 # Which channel gets to speak to me right now
 
     def connect(self):
         self.cnt = self.cnt + 1 

@@ -120,10 +120,12 @@ class _ThreadRead_(threading.Thread):
         """run is the function ran by the thread"""
         while(not self.stop_event.is_set()):
             # read values until stop is sent
-            response = _read_once(self.chan_select,self.spi)
-            #print(response)
-            self.data["d"].append(response) # Push response to the data list for later
-            self.data["t"].append(time.time())
+            if the_chip.toggle % 2 == self.chan_select: # this channel only read avery other reading
+                response = _read_once(self.chan_select,self.spi)
+                #print(response)
+                self.data["d"].append(response) # Push response to the data list for later
+                self.data["t"].append(time.time())
+                the_chip.toggle = the_chip + 1
             #sleep(0.0001) # I need to be small enough to capture peaks.
         return
 
