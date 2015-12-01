@@ -77,7 +77,6 @@ class DistanceSensor(object):
                 print("distanceSensor.py: Could not connect to serial port.", file=sys.stderr)
             else:
                 self.connected = True
-                self.connect_time = time.time()
         else:
             pass
 

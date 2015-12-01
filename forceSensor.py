@@ -32,7 +32,6 @@ class ForceSensor(object):
     def connect(self):
         if not self.connected:
             self.connected = True
-            self.connect_time = time.time()
             self.spi.connect()
 
     def disconnect(self):
@@ -44,7 +43,7 @@ class ForceSensor(object):
         """Gets a force once."""
         if self.connected:
             measured_voltage1 = _read_once(1,self.spi)
-            measured_voltage2 = _read_once(1,self.spi)
+            measured_voltage2 = _read_once(2,self.spi)
             force1 = _v_to_lbs(self.cal_m_1,self.cal_b_1,measured_voltage1)
             force2 = _v_to_lbs(self.cal_m_2,self.cal_b_2,measured_voltage2)
         else:
