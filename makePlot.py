@@ -60,7 +60,7 @@ def makePlot(input):
     # from http://stackoverflow.com/questions/20107414/passing-a-matplotlib-figure-to-html-flask
     img = StringIO()
     plt.savefig(img) # for production
-    plt.savefig('/tmp/test.png') # for debug only
+    #plt.savefig('/tmp/test.png') # for debug only
     img.seek(0)
     return img
 
