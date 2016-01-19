@@ -37,16 +37,30 @@ def makePlot(input):
 
     # Actual Plotting Here
     plt.clf() # clear figure
-    plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r.-')
-    plt.plot(data["cone_vals"]["t"],data["cone_vals"]["d"],'b.-')
-    plt.plot(data["donut_vals"]["t"],data["donut_vals"]["d"],'g.-')
+    plt.figure(1) # optional
+    axis1 = plt.subplot(2, 1, 1) # just like matlab...
+    try:
+        plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r.-')
+    except ValueError:
+        plt.plot(0,0)
+    plt.ylabel('Distance (in)') #this will be a pressure by the time it gets here
+    plt.xlabel('Time (s)')
+    plt.legend(['Range Values'], 'lower right')
+
+    axis2 = plt.subplot(2, 1, 2, sharex=axis1)
+    try:
+        plt.plot(data["cone_vals"]["t"],data["cone_vals"]["d"],'b.-')
+        plt.plot(data["donut_vals"]["t"],data["donut_vals"]["d"],'g.-')
+    except ValueError:
+        plt.plot(0,0)
     plt.ylabel('Voltage (V)') #this will be a pressure by the time it gets here
     plt.xlabel('Time (s)')
     plt.legend(["Range Values", "Cone Values", "Donut Values"], 'lower right')
+    
     # from http://stackoverflow.com/questions/20107414/passing-a-matplotlib-figure-to-html-flask
     img = StringIO()
     plt.savefig(img) # for production
-    #plt.savefig('/tmp/test.png') # for debug only
+    plt.savefig('/tmp/test.png') # for debug only
     img.seek(0)
     return img
 
