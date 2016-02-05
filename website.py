@@ -151,10 +151,11 @@ def _analysis_upload():
     file = request.files['file']
     if file and allowed_filename(file.filename):
         json_form = {'data':file.read()}
-        return jsonify(result = json_form)
+        response = json_form
     else:
-        # need to return error
-        return jsonify(result = "error")
+        response = "error"
+
+    return jsonify(result = response)
         
 if __name__ == '__main__':
     app.run()

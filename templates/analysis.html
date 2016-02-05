@@ -5,13 +5,17 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-6-md">
-    <p>Hello World. </p>
-    <form action="/_analysis/upload" method=post enctype=multipart/form-data>
-        <p><input type=file name=file>
-        <input type=submit value=Upload>
+  <div class="col-md-6">
+    <div class="row">
+    <h1>Input File</h1>
+    <form action="/_analysis/upload" method="post" enctype="multipart/form-data" >
+      <fieldset class="form-group">
+        <input type="file" class="file-control-file" name="file" id="file-input" >
+      </fieldset>
+        <input class="btn btn-default" type="submit" >
     </form>
-    </div>
+    </div> <!-- row -->
+    </div> <!--column -->
 
   </div> <!-- row -->
 {% endblock %}
