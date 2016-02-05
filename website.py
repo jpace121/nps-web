@@ -133,6 +133,9 @@ def log_get(filename):
 def fig_fn():
     return send_file(fig, mimetype='image/png')
     
+@app.route('/analysis.html')
+def analysis_html():
+    return render_template('analysis.html')
     
 if __name__ == '__main__':
     app.run()

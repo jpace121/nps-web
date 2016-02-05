@@ -1,0 +1,3 @@
+/*
+  Contains javascript functions for analysis.html page.
+  */
