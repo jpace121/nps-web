@@ -3,6 +3,7 @@ from distanceSensor import DistanceSensor
 from forceSensor import ForceSensor
 from flask import Flask, request, session, g, redirect, url_for, \
     abort, render_template, flash, jsonify, send_file
+from werkzeug import secure_filename
 from time import sleep, time
 import saveTocsv as tocsv
 import json
@@ -27,6 +28,14 @@ app_status = {"connected":False, "streaming":False}
 
 # ugly global variable for the figure to be plotted.
 fig = "  "
+
+# config for file uploads
+app.config['UPLOAD_FOLDER'] = './uploads' # for testing
+#app.config['UPLOAD_FOLDER'] = '/root/python-bluetooth/uploads' # for realz
+
+# Guarantees the uploaded file is a valid file type
+def allowed_filename(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ['csv']
 
 @app.route('/')
 @app.route('/index.html')
@@ -136,7 +145,17 @@ def fig_fn():
 @app.route('/analysis.html')
 def analysis_html():
     return render_template('analysis.html')
-    
+
+@app.route('/_analysis/upload', methods = ['POST'])
+def _analysis_upload():
+    file = request.files['file']
+    if file and allowed_filename(file.filename):
+        json_form = {'data':file.read()}
+        return jsonify(result = json_form)
+    else:
+        # need to return error
+        return jsonify(result = "error")
+        
 if __name__ == '__main__':
     app.run()
 
