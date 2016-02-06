@@ -151,7 +151,7 @@ def analysis_html():
 def _analysis_upload():
     file = request.files['file']
     if file and allowed_filename(file.filename):
-        response = analysis.CSVtoDict(file.read())
+        response = analysis.CSVtoDict(file)
     else:
         response = "error"
     return jsonify(result = response)
