@@ -3,5 +3,27 @@
   */
 
 $("#file-form").submit(function (event){
-    console.log("File submitted.");
+    var fd = new FormData();
+    var request;
+    event.preventDefault();
+    console.log("File uploading.");
+    $("#submit-btn").text("Uploading...");
+    fd.append('file',$("#file-input")[0].files[0]);
+    request = $.ajax({
+        url: "/_analysis/upload",
+        data: fd,
+        processData: false,
+        contentType: false,
+        type: "POST",
+        });
+    request.done(function(response) {
+        console.log(response);
+        $("#submit-btn").text("Submit");
+        });
+    request.error(function(reponse) {
+        console.log('Error from AJAX call.');
+        $("#submit-btn").text("Try again?");
+        });
+        
+           
 })

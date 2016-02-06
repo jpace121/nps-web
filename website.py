@@ -9,6 +9,7 @@ import saveTocsv as tocsv
 import json
 import makePlot as plot
 from nocache import nocache
+import analysis
 import thread
 
 app = Flask(__name__)
@@ -150,11 +151,9 @@ def analysis_html():
 def _analysis_upload():
     file = request.files['file']
     if file and allowed_filename(file.filename):
-        json_form = {'data':file.read()}
-        response = json_form
+        response = analysis.CSVtoDict(file.read())
     else:
         response = "error"
-
     return jsonify(result = response)
         
 if __name__ == '__main__':

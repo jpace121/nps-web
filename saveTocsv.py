@@ -6,6 +6,9 @@ import subprocess32 as sub
 import glob
 import os
 
+#ROOT_PATH = "/root/python-bluetooth/" #for reals
+ROOT_PATH = "/Users/jimmy/Desktop/AME/python_bluetooth/" # for testing
+
 """
 Converts a json file created by the website.py website into a csv file
 which can be read in excel.
@@ -14,11 +17,11 @@ files from the GUI.
 """
 
 def get_file_list():
-   print_list = sub.check_output(["ls","/root/python-bluetooth/logs"]).split("\n")
+   print_list = sub.check_output(["ls",ROOT_PATH + "logs"]).split("\n")
    return print_list
 
 def delete_files():
-   to_delete = glob.glob("/root/python-bluetooth/logs/*.csv")
+   to_delete = glob.glob(ROOT_PATH + "logs/*.csv")
    for file in to_delete:
       sub.call(["rm",file])
 
@@ -28,8 +31,8 @@ def zip_for_download():
    filename = datetime.datetime.fromtimestamp(ts).strftime('penetrometer_%Y%m%d_%H%M.zip')
    filepath = "/tmp/"
    orig_dir = sub.check_output(["pwd"]).rstrip()
-   os.chdir("/root/python-bluetooth")
-   output = sub.call(["zip","-r","-j",filepath+filename,"/root/python-bluetooth/logs"])
+   os.chdir(ROOT_PATH)
+   output = sub.call(["zip","-r","-j",filepath+filename,ROOT_PATH + "logs"])
    os.chdir(orig_dir)
    if output == 0:
       return filepath+filename
@@ -40,11 +43,11 @@ def makeDataFileName():
     # inspired by http://stackoverflow.com/questions/13890935/timestamp-python
    ts = time.time()
    filename = datetime.datetime.fromtimestamp(ts).strftime('penetrometer_%Y%m%d_%H%M%S.csv')
-   filepath = "/root/python-bluetooth/logs/" #use environment variable?
+   filepath = ROOT_PATH + "logs/" #use environment variable?
    return filepath+filename
 
 def get_file(filename):
-    return "/root/python-bluetooth/logs/" + filename 
+    return ROOT_PATH + "logs/" + filename 
 
 def jsonToCSV(str_file):
    # Step 1, remove a layer of nodes.
@@ -83,12 +86,33 @@ def jsonToCSV(str_file):
                elem = " "
             row.append(elem)
          writer.writerow(row)
+         
+def CSVtoDict(csv_file):
+   """Translates a CSV file to dictionary for use later. Assume that csv_file
+   has been opened elsewhere, and will be closed there as well.
+   I'm also assuming the structure of the CSV here, unlike what I did in the
+   previous function, where everything is generic."""
+   # TODO: Make this function generic.
+   data_dict = {'range_vals':{'t':[],'d':[]},'donut_vals':{'t':[],'d':[]},'cone_vals':{'t':[],'d':[]}}
+   fieldnames = ("range_vals_t","range_vals_d","donut_vals_t","donut_vals_d","cone_vals_t", "cone_vals_d")
+   dictreader = csv.DictReader(csv_file,fieldnames)
+   for line in dictreader:
+      data_dict['range_vals']['t'].append(line['range_vals_t'])
+      data_dict['range_vals']['d'].append(line['range_vals_d'])
+      data_dict['donut_vals']['t'].append(line['donut_vals_t'])
+      data_dict['donut_vals']['d'].append(line['donut_vals_d'])
+      data_dict['cone_vals']['t'].append(line['cone_vals_t'])
+      data_dict['cone_vals']['d'].append(line['cone_vals_d'])
+   return data_dict
 
 if __name__ == "__main__":
    get_file_list()
    print(zip_for_download())
    with open('./test.json','r') as f:
       test_json = f.read()
-      print makeDataFileName()
+      filename = makeDataFileName()
+      print filename
       jsonToCSV(test_json)
+   with open(filename,'r') as f:
+      CSVtoJSON(f)
    delete_files()
