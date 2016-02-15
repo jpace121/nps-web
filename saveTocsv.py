@@ -8,6 +8,7 @@ import os
 
 #ROOT_PATH = "/root/python-bluetooth/" #for reals
 ROOT_PATH = "/Users/jimmy/Desktop/AME/python_bluetooth/" # for testing
+# ^ could be replace with sub.call["pwd"]
 
 """
 Converts a json file created by the website.py website into a csv file
@@ -49,7 +50,7 @@ def makeDataFileName():
 def get_file(filename):
     return ROOT_PATH + "logs/" + filename 
 
-def jsonToCSV(str_file):
+def jsonToCSV(str_file, filename = False):
    # Step 1, remove a layer of nodes.
    big_dict = {}
    json_file = json.loads(str_file)
@@ -70,7 +71,10 @@ def jsonToCSV(str_file):
       if not big_dict[key] is None and len(big_dict[key]) > max_len:
          max_len = len(big_dict[key])
 
-   with open(makeDataFileName(),'w') as csv_file:
+   if not filename:
+      filename = makeDataFileName()
+
+   with open(filename,'w') as csv_file:
       writer = csv.writer(csv_file)
       # Step 3: Write first row.
       writer.writerow(sorted(big_dict.keys(),reverse=True))
@@ -103,6 +107,8 @@ def CSVtoDict(csv_file):
       data_dict['donut_vals']['d'].append(line['donut_vals_d'])
       data_dict['cone_vals']['t'].append(line['cone_vals_t'])
       data_dict['cone_vals']['d'].append(line['cone_vals_d'])
+
+   # Might want to delete empty elements in here somewhere?
    return data_dict
 
 if __name__ == "__main__":
