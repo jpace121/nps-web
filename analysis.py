@@ -71,19 +71,19 @@ def analysis(file,filename):
     # 0.1s is an approximation, and may be way off base. We will need to play with it.
     # for ease of use, Im going to use the cone peaks as the "true" peaks.
     # I also have to include the range
-    crop_width = 0.1/2
+    crop_width = 0.05/2
     cone_cropped = [] 
     donut_cropped = []
     range_cropped = []
     for max_indice in max_loc_cone:
-        nStart = max_indice - crop_width*cone_freq
-        nEnd = max_indice + crop_width*cone_freq
+        nStart = max_indice - (0.2*crop_width)*cone_freq # not integers...
+        nEnd = max_indice + (0.8*crop_width)*cone_freq # not integers...
         
         cone_cropped.append((cone_vals_t[nStart:nEnd],cone_vals_d[nStart:nEnd]))
         donut_cropped.append((donut_vals_t[nStart:nEnd],donut_vals_d[nStart:nEnd]))
         
-        range_nStart = _findnearest(range_vals_t, cone_vals_t[nStart]) - 1
-        range_nEnd = _findnearest(range_vals_t, cone_vals_t[nEnd]) + 1
+        range_nStart = _findnearest(range_vals_t, cone_vals_t[nStart]) - 5
+        range_nEnd = _findnearest(range_vals_t, cone_vals_t[nEnd]) + 6
         range_cropped.append((range_vals_t[range_nStart:range_nEnd],donut_vals_d[range_nStart:range_nEnd]))
 
     # For each group:
@@ -101,7 +101,7 @@ def analysis(file,filename):
         n = n + 1
         saveCSV.jsonToCSV(json.dumps(big_dict),filename = filenameset)
         # Make plot and save in dict
-        img = plot.makePlot(big_dict)
+        img = plot.makePlot(big_dict, style='hump')
         plot_dict.append(base64.b64encode(img.getvalue()))
 
     return (filename_dict, plot_dict)

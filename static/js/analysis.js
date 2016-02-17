@@ -17,12 +17,14 @@ $("#file-form").submit(function (event){
         type: "POST",
         });
     request.done(function(response) {
-        console.log(response);
+        //console.log(response);
         $("#submit-btn").text("Submit");
         response.result.filenames.forEach(function (filename, index, array) {
             plots = response.result.plots;
             $("#results").append("<tr>" +
-                                 "<td>" + filename + "</td>" +
+                                 "<td>" +'<a href="' + $SCRIPT_ROOT + 'log\\' +
+                                    filename + '">' + filename + '<\a>' +
+                                 "</td>" +
                                  "<td>" + "<img src=" +"data:image/png;base64,"
                                     + plots[index] + ">" + " </td>" +
                                  "</tr>");
@@ -33,3 +35,8 @@ $("#file-form").submit(function (event){
         $("#submit-btn").text("Try again?");
         });
 })
+
+$("#clear-btn").click(function () {
+    $("#results td").remove();
+})
+

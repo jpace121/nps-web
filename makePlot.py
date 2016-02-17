@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 import random
 from StringIO import StringIO
 
-def makePlot(input):
+def makePlot(input, style='sensors'):
+    # Styles:
+    #    1. sensors = the style used by sensor.html
+    #    2. hump = the style used by analysis.html
     # This is a way to catch for when the data does not exist. It is slightly
     # convoluted.
     data = {'range_vals':{"t":[],"d":[]},'cone_vals': {"t":[],"d":[]}, 'donut_vals':{"t":[],"d":[]}}
@@ -37,16 +40,25 @@ def makePlot(input):
     # Actual Plotting Here
     plt.clf() # clear figure
     plt.figure(1) # optional
-    axis1 = plt.subplot(2, 1, 1) # just like matlab...
+    if style == 'hump':
+        axis1 = plt.subplot(1,2,1)
+    else:
+        axis1 = plt.subplot(2, 1, 1) # just like matlab...
     try:
         plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r.-')
     except ValueError:
         plt.plot(0,0)
     plt.ylabel('Distance (in)') #this will be a pressure by the time it gets here
     plt.xlabel('Time (s)')
-    plt.legend(['Range Values'], 'lower right')
+    if style == 'hump':
+        plt.legend(['Range Values'], 'upper left')
+    else:
+        plt.legend(['Range Values'], 'lower right')
 
-    axis2 = plt.subplot(2, 1, 2, sharex=axis1)
+    if style == 'hump':
+        axis2 = plt.subplot(1,2,2)
+    else:
+        axis2 = plt.subplot(2, 1, 2, sharex=axis1)
     try:
         plt.plot(data["cone_vals"]["t"],data["cone_vals"]["d"],'b.-')
         plt.plot(data["donut_vals"]["t"],data["donut_vals"]["d"],'g.-')
@@ -54,11 +66,14 @@ def makePlot(input):
         plt.plot(0,0)
     plt.ylabel('Voltage (V)') #this will be a pressure by the time it gets here
     plt.xlabel('Time (s)')
-    plt.legend(["Cone Values", "Donut Values"], 'lower right')
+    if style == 'hump':
+        lgd = plt.legend(["Cone Values", "Donut Values"], 'upper right', bbox_to_anchor=(0.9,-0.1))
+    else:
+        lgd = plt.legend(["Cone Values", "Donut Values"], 'lower right')
     
     # from http://stackoverflow.com/questions/20107414/passing-a-matplotlib-figure-to-html-flask
     img = StringIO()
-    plt.savefig(img) # for production
+    plt.savefig(img, bbox_inches="tight") # for production
     #plt.savefig('/tmp/test.png') # for debug only
     img.seek(0)
     return img
