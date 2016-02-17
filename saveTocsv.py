@@ -73,6 +73,8 @@ def jsonToCSV(str_file, filename = False):
 
    if not filename:
       filename = makeDataFileName()
+   else:
+      filename = ROOT_PATH + "logs/" + filename
 
    with open(filename,'w') as csv_file:
       writer = csv.writer(csv_file)

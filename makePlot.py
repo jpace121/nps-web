@@ -5,7 +5,6 @@ import random
 from StringIO import StringIO
 
 def makePlot(input):
-    # I should calculate friction ratios in here.
     # This is a way to catch for when the data does not exist. It is slightly
     # convoluted.
     data = {'range_vals':{"t":[],"d":[]},'cone_vals': {"t":[],"d":[]}, 'donut_vals':{"t":[],"d":[]}}

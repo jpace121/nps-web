@@ -19,11 +19,17 @@ $("#file-form").submit(function (event){
     request.done(function(response) {
         console.log(response);
         $("#submit-btn").text("Submit");
+        response.result.filenames.forEach(function (filename, index, array) {
+            plots = response.result.plots;
+            $("#results").append("<tr>" +
+                                 "<td>" + filename + "</td>" +
+                                 "<td>" + "<img src=" +"data:image/png;base64,"
+                                    + plots[index] + ">" + " </td>" +
+                                 "</tr>");
+            });
         });
     request.error(function(reponse) {
         console.log('Error from AJAX call.');
         $("#submit-btn").text("Try again?");
         });
-        
-           
 })

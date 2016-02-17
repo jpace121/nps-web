@@ -151,13 +151,11 @@ def analysis_html():
 def _analysis_upload():
     file = request.files['file']
     if file and allowed_filename(file.filename):
-        data_dict = analysis.CSVtoDict(file)
-        analysis.analysis(file)
-        response = "success"
+        (filename_dict, plot_dict) = analysis.analysis(file, file.filename)
+        response = {'filenames':filename_dict,'plots':plot_dict}
     else:
         response = "error"
     return jsonify(result = response)
         
 if __name__ == '__main__':
     app.run()
-
