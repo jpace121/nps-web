@@ -1,16 +1,21 @@
 /*
   Contains javascript functions for analysis.html page.
   */
-
 $("#file-form").submit(function (event){
     var fd = new FormData();
     var request;
+    var data;
+    var download_bool = false;
     event.preventDefault();
     console.log("File uploading.");
+    
+    download_bool = $("#download-chk").is(':checked');
+    console.log('download_bool values is: ' + download_bool);
+    
     $("#submit-btn").text("Uploading...");
     fd.append('file',$("#file-input")[0].files[0]);
     request = $.ajax({
-        url: "/_analysis/upload",
+        url: "/_analysis/upload?response=" + download_bool,
         data: fd,
         processData: false,
         contentType: false,
