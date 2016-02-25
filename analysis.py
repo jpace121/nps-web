@@ -78,12 +78,23 @@ def analysis(file,filename):
     for max_indice in max_loc_cone:
         nStart = max_indice - (0.2*crop_width)*cone_freq # not integers...
         nEnd = max_indice + (0.8*crop_width)*cone_freq # not integers...
+
+        if nStart < 0:
+            nStart = 0
+        if nEnd > len(cone_vals_t):
+            nEnd = len(cone_vals_t) - 1
         
         cone_cropped.append((cone_vals_t[nStart:nEnd],cone_vals_d[nStart:nEnd]))
         donut_cropped.append((donut_vals_t[nStart:nEnd],donut_vals_d[nStart:nEnd]))
         
         range_nStart = _findnearest(range_vals_t, cone_vals_t[nStart]) - 5
         range_nEnd = _findnearest(range_vals_t, cone_vals_t[nEnd]) + 6
+        
+        if range_nStart < 0:
+            range_nStart = 0
+        if range_nEnd > len(range_vals_t):
+            range_nEnd = len(range_vals_t)
+            
         range_cropped.append((range_vals_t[range_nStart:range_nEnd],donut_vals_d[range_nStart:range_nEnd]))
 
     # For each group:
