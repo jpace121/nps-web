@@ -147,7 +147,7 @@ def fig_fn():
 def analysis_html():
     return render_template('analysis.html')
 
-@app.route('/_analysis/upload', methods = 'POST')
+@app.route('/_analysis/upload', methods = ['POST'])
 def _analysis_upload():
     file = request.files['file']
     if file and allowed_filename(file.filename):
@@ -156,7 +156,6 @@ def _analysis_upload():
     else:
         response = "error"
     return jsonify(result = response)
-    
         
 if __name__ == '__main__':
     app.run()

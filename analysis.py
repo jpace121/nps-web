@@ -6,12 +6,6 @@ import numpy as np
 import json
 import makePlot as plot
 import base64
-import os
-import subprocess32 as sub
-import time
-import datetime
-
-ROOT_PATH = saveCSV.ROOT_PATH
 
 # What do we need to do?
 # Read the data in from computer [x] 
@@ -130,23 +124,7 @@ def _findnearest(array,value):
 def _makefilename(filename, n):
     return filename.split('/')[-1].split(".")[0] + "_[" + str(n) + "].csv"
 
-def zip_for_download(file_list):
-   print("zip_for_download:")
-   ts = time.time()
-   filename = datetime.datetime.fromtimestamp(ts).strftime('penetrometer_%Y%m%d_%H%M.zip')
-   filepath = "/tmp/"
-   orig_dir = sub.check_output(["pwd"]).rstrip()
-   os.chdir(ROOT_PATH)
-   os.call(["mkdir",(filepath+filename).strip(".zip")])
-   for item in file_list:
-       sub.call(["cp",item,(filepath+filename).strip(".zip")])
-   output = sub.call(["zip","-r","-j",filepath+filename,(filepath+filename).strip(".zip")])
-   os.chdir(orig_dir)
-   if output == 0:
-      return filepath+filename
-   else:
-      return False
-      
+    
 if __name__ == "__main__":
     with open(sys.argv[1],'r') as f:
         print analysis(f,sys.argv[1])
