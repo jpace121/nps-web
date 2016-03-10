@@ -6,9 +6,11 @@ import subprocess32 as sub
 import glob
 import os
 
-ROOT_PATH = "/root/python-bluetooth/" #for reals
-#ROOT_PATH = "/Users/jimmy/Desktop/AME/python_bluetooth/" # for testing
-# ^ could be replace with sub.call["pwd"]
+# Load config file
+with open('./config.json') as f:
+   config_file = json.load(f)
+   
+ROOT_PATH = str(config_file["rootpath"])
 
 """
 Converts a json file created by the website.py website into a csv file

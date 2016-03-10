@@ -15,10 +15,15 @@ import thread
 app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
 
+# load config file
+with open('./config.json') as f:
+    config_file = json.load(f)
+
 # Sensor related global variables
 connect_time = time()
 #range_finder = DistanceSensor('/dev/cu.usbmodem1421')
-range_finder = DistanceSensor('/dev/rfcomm0', connect_time)
+#range_finder = DistanceSensor('/dev/rfcomm0', connect_time)
+range_finder = DistanceSensor(str(config_file["distance_sensor_path"]), connect_time)
 force_sensor = ForceSensor(connect_time)
 
 # Global variable to maintain the state of the app.
@@ -29,10 +34,6 @@ app_status = {"connected":False, "streaming":False}
 
 # ugly global variable for the figure to be plotted.
 fig = "  "
-
-# config for file uploads
-app.config['UPLOAD_FOLDER'] = './uploads' # for testing
-#app.config['UPLOAD_FOLDER'] = '/root/python-bluetooth/uploads' # for realz
 
 # Guarantees the uploaded file is a valid file type
 def allowed_filename(filename):

@@ -1,0 +1,6 @@
+{
+    "test": false ,
+    "rootpath": "/root/python-bluetooth/",
+    "distance_sensor_path": "/dev/rfcomm0"
+
+}

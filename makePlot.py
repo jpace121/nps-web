@@ -3,6 +3,11 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import random
 from StringIO import StringIO
+import json
+
+# Open config file
+with open("./config.json") as f:
+    config_file = json.loads(f)
 
 def makePlot(input, style='sensors'):
     # Styles:
@@ -73,8 +78,10 @@ def makePlot(input, style='sensors'):
     
     # from http://stackoverflow.com/questions/20107414/passing-a-matplotlib-figure-to-html-flask
     img = StringIO()
-    plt.savefig(img, bbox_inches="tight") # for production
-    #plt.savefig('/tmp/test.png') # for debug only
+    if not config_file["test"]:
+        plt.savefig(img, bbox_inches="tight") # for production
+    else:
+        plt.savefig('/tmp/test.png') # for debug only
     img.seek(0)
     return img
 
