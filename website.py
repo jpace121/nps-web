@@ -11,6 +11,7 @@ import makePlot as plot
 from nocache import nocache
 import analysis
 import thread
+import base64
 
 app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
@@ -31,9 +32,6 @@ force_sensor = ForceSensor(connect_time)
 # This is only used for maintaining the GUI, does not effect the operation 
 # of the application.
 app_status = {"connected":False, "streaming":False}
-
-# ugly global variable for the figure to be plotted.
-fig = "  "
 
 # Guarantees the uploaded file is a valid file type
 def allowed_filename(filename):
@@ -72,11 +70,10 @@ def get_range_values_get():
         data = {}
         data['range_vals'] = range_finder.streamStop()
         (data['cone_vals'], data['donut_vals']) = force_sensor.streamStop()
-        if app_status["streaming"]: #only update fig if I was streaming
-            fig = plot.makePlot(data)
         jsoned = json.dumps(data)
         thread.start_new_thread(tocsv.jsonToCSV, (jsoned,))
-        response = "stream_stop"
+        img = plot.makePlot(data)
+        response = base64.b64encode(img.getvalue())
         app_status["streaming"] = False
     elif option == "once":
         response = {}
@@ -139,11 +136,6 @@ def _get_file():
 def log_get(filename):
     return send_file(tocsv.get_file(filename), as_attachment=True)
 
-@app.route('/image/fig')
-@nocache
-def fig_fn():
-    return send_file(fig, mimetype='image/png')
-    
 @app.route('/analysis.html')
 def analysis_html():
     return render_template('analysis.html')
