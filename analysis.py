@@ -124,20 +124,23 @@ def calc_frict_ratio(cone_maxes, donut_maxes, range_maxes, filename):
        should be saved under.
        Save data as a file and return values. """
     # Areas to calculate the friction ratios.
-    A_cone = 0.785
-    A_donut = 6.28
-    # Convert voltages to weight
+    A_cone = config_file["areas"]["cone"]
+    A_donut = config_file["areas"]["donut"]
+    
+    # Convert voltages to pressure (V -> psi)
     cone_max_f = []
     for cone_max in cone_maxes:
         lb = config_file['calibValues']['cone_m']*cone_max + \
              config_file['calibValues']['cone_b']
-        cone_max_f.append(lb/A_cone)
+        psi = lb/A_cone
+        cone_max_f.append(psi)
         
     donut_max_f = []
     for donut_max in donut_maxes:
         lb = config_file['calibValues']['donut_m']*donut_max + \
              config_file['calibValues']['donut_b']
-        donut_max_f.append(lb/A_donut)
+        psi = lb/A_donut
+        donut_max_f.append(psi)
     
     # Calculate friction ratio.
     friction_ratios = []
