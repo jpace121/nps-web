@@ -75,7 +75,7 @@ def makePlot(input, style='sensors'):
     img = StringIO()
     plt.savefig(img, bbox_inches="tight") # for production
     
-    if config_file["test"]:
+    if config_file["save_tmp_plot"]:
         plt.savefig('/tmp/test.png') # for debug only
     img.seek(0)
     return img

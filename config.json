@@ -1,6 +1,13 @@
 {
-    "test": false ,
-    "rootpath": "/root/python-bluetooth/",
-    "distance_sensor_path": "/dev/rfcomm0"
-
+    "save_tmp_plot": false ,
+    "rootpath": "./",
+    "distance_sensor_path": "/dev/rfcomm0",
+    "calibValues": {
+        "cone_m": 77.1489,
+        "cone_b": -7.5264,
+        "donut_m": 87.1703,
+        "donut_b": -47.7938,
+        "donut_area": 6.28,
+        "cone_area": 0.785
+        }
 }

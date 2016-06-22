@@ -148,8 +148,14 @@ def _analysis_upload(filename):
 
 @app.route('/_analysis/calc_ratio', methods=['POST'])
 def _analysis_calc_ratio():
-    print(request.json['range_maxes'])
-    return "Success" 
+    cone_maxes = request.json['cone_maxes']
+    donut_maxes = request.json['donut_maxes']
+    range_maxes = request.json['range_maxes']
+    filename = request.json['filename']
+    (friction_ratios, cone_max_f) = analysis.calc_frict_ratio(cone_maxes, donut_maxes, range_maxes, filename)
+
+    response = {'friction_ratios':friction_ratios, 'cone_max_f':cone_max_f, 'range_maxes':range_maxes}
+    return jsonify(result=response)
         
 if __name__ == '__main__':
     app.run()

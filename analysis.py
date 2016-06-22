@@ -123,30 +123,46 @@ def calc_frict_ratio(cone_maxes, donut_maxes, range_maxes, filename):
        the corresponding depths, and the filename with the timestamp it
        should be saved under.
        Save data as a file and return values. """
+    # Areas to calculate the friction ratios.
+    A_cone = 0.785
+    A_donut = 6.28
     # Convert voltages to weight
-    cone_max_lb = []
+    cone_max_f = []
     for cone_max in cone_maxes:
         lb = config_file['calibValues']['cone_m']*cone_max + \
              config_file['calibValues']['cone_b']
-        cone_max_lb.push(lb)
+        cone_max_f.append(lb/A_cone)
         
-    donut_max_lb = []
+    donut_max_f = []
     for donut_max in donut_maxes:
         lb = config_file['calibValues']['donut_m']*donut_max + \
              config_file['calibValues']['donut_b']
-        donut_max_lb.push(lb)
+        donut_max_f.append(lb/A_donut)
     
     # Calculate friction ratio.
     friction_ratios = []
-    for i in range(0, len(cone_max_lb)):
-        Fr = 
+    for i in range(0, len(cone_max_f)):
+        Fr = (donut_max_f[i]/cone_max_f[i])*100
+        friction_ratios.append(Fr)
+
+    # Convert cone max f to bar
+    cone_max_bar = []
+    for elem in cone_max_f:
+        cone_max_bar.append(elem*0.0689476)
+
+    with open(_makefilename(filename), 'w') as f:
+        f.write('depth (in), fri (%), qc (bar) \n')
+        for i in range(0,len(friction_ratios)):
+            f.write(str(range_maxes[i]) + ',' + str(friction_ratios[i]) + ',' + str(cone_max_bar[i]) + '\n')
+
+    return (friction_ratios, cone_max_bar)
     
 def _findnearest(array,value):
     """Find the index of numpy array 'array' which is nearest to 'value'. """
     return (np.abs(array-value)).argmin()
 
-def _makefilename(filename, n):
-    return filename.split('/')[-1].split(".")[0] + "_[" + str(n) + "].csv"
+def _makefilename(filename):
+    return config_file["rootpath"] + '/logs/' + filename.split('/')[-1].split(".")[0] + "_analyzed.txt"
 
     
 if __name__ == "__main__":

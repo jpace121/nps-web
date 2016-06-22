@@ -125,6 +125,22 @@ var show_results = function () {
         console.log('AJAX error show_results.');
     });
     request.done(function (response) {
-        console.log(response);
-    });
-}
+        var qc = response.result.cone_max_f;
+        var Fr = response.result.friction_ratios;
+        var depth = response.result.range_maxes;
+
+        Fr.forEach(function(elem, i, arr) {
+            $('#frict-rat-tbl').append('<tr>' +
+                                        '<td>' +
+                                        '<p>' + depth[i].toFixed(2) + '</p>' +
+                                        '</td>' +
+                                        '<td>' +
+                                        '<p>' + Fr[i].toFixed(2) + '</p>' +
+                                        '</td>' +
+                                        '<td>' +
+                                        '<p>' + qc[i].toFixed(2) +'</p>' +
+                                        '</td>' + 
+                                        '</tr>');
+                });
+        });
+};
