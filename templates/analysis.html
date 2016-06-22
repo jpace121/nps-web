@@ -5,30 +5,45 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-md-6">
-    <div class="row">
-    <h1>Controls</h1>
-    <h2>Input File</h2>
-    <form action="/_analysis/upload" method="post" enctype="multipart/form-data" id="file-form" >
-      <fieldset class="form-group">
-        <input type="file" class="file-control-file" name="file" id="file-input" >
-      </fieldset>
-        <button class="btn btn-default" type="submit" id="submit-btn"> Submit </button>
-    </form>
-    <button class="btn btn-large" id="clear-btn"> Clear Graphs </button>
-    </div> <!-- row in column-->
-    </div> <!--column -->
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+            <p>To begin select a file to analyze. </p>
+            <p>To reset, reload this page. </p>
+        </div> <!--panelbody -->
+      </div> <!--panel-->
+    </div> <!-- columsn -->
   </div> <!-- row -->
-<div class="row">
-  <table id = "results" class="table">
-    <thead>
-        <tr>
-            <th>File Name</th>
-            <th> Zoomed Plot</th>
-        </tr>
-    </thead>
-    </table>
-  
+<div class="row col-md-12">
+  <div class="collapse" id="fileSelect">
+    <div class="well" id="file-well">
+      <h3>File List</h3>
+      <table id="file-list">
+        </table>
+      <button type="button" class="btn btn-lg" id="submit-file-button">
+        Submit!
+        </button> <!-- Submit file button -->
+      </div> <!-- well -->
+    </div> <!-- collapse div  -->
+ </div> <!-- row -->
+
+<div class="row col-md-12">
+  <div class="collapse" id="validGraphSelect">
+    <div class="well" id="graph-well">
+      <table id="plot-maxes-tbl" class="table">
+        </table>
+      <button type="button" class="btn btn-lg" id="submit-max-button">
+        Submit!
+        </button>
+      </div> <!-- Well -->
+    </div> <!--valid graph div -->
+  </div> <!-- row -->
+
+<div class="row col-md-12">
+  <div class="collapse" id="resultsCollapse">
+    <div class="well" id="results-well">
+      </div> <!-- well -->
+    </div> <!-- collapse div -->
   </div> <!-- row -->
 {% endblock %}
 

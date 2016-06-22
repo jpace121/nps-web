@@ -7,23 +7,17 @@ import json
 import makePlot as plot
 import base64
 
-# What do we need to do?
-# Read the data in from computer [x] 
-# Translate to a pythonic object [x]
-# Find peaks [x]
-# Clip data around peaks. [x]
-# Save csv of clipped data [ ]
-# Gaph clipped data. [ ]
-# Send graphs and filenames via json to frontend [ ]
+with open('./config.json') as f:
+    config_file = json.load(f)
 
-def analysis(file,filename):
+def find_maxes(filename):
     """
-       Perform all of the post processing for files.
-       (Is it smart to do all of this in one function?)
-       Assumes file is an already open csv file, and it is someone elses job
-       to close it.
+       Find peaks and related post processing for log files.
+       Assumes that 'filename' is a valid file at rootpath/logs.
     """
+    file = open(config_file['rootpath']+'/logs/'+filename)
     data = CSVtoDict(file)
+    file.close()
 
     # "Unpack" the CSV
     cone_vals_t = np.array(data['cone_vals']['t'])
@@ -75,7 +69,13 @@ def analysis(file,filename):
     cone_cropped = [] 
     donut_cropped = []
     range_cropped = []
+    max_cone_cropped = []
+    max_donut_cropped = []
+    max_range_cropped = []
+    max_indice_donut = -1
     for max_indice in max_loc_cone:
+        max_indice_donut = max_indice_donut + 1 # also need to increment through donut_locs
+        
         nStart = max_indice - (0.2*crop_width)*cone_freq # not integers...
         nEnd = max_indice + (0.8*crop_width)*cone_freq # not integers...
 
@@ -87,6 +87,12 @@ def analysis(file,filename):
         cone_cropped.append((cone_vals_t[nStart:nEnd],cone_vals_d[nStart:nEnd]))
         donut_cropped.append((donut_vals_t[nStart:nEnd],donut_vals_d[nStart:nEnd]))
         
+        max_cone_cropped.append(cone_vals_d[max_indice])
+        max_donut_cropped.append(donut_vals_d[max_indice_donut])
+
+        range_index_max = _findnearest(range_vals_t, cone_vals_t[max_indice]) + 1
+        max_range_cropped.append(range_vals_d[range_index_max]-range_vals_d[0])
+        
         range_nStart = _findnearest(range_vals_t, cone_vals_t[nStart]) - 5
         range_nEnd = _findnearest(range_vals_t, cone_vals_t[nEnd]) + 6
         
@@ -94,28 +100,46 @@ def analysis(file,filename):
             range_nStart = 0
         if range_nEnd > len(range_vals_t):
             range_nEnd = len(range_vals_t)
-            
         range_cropped.append((range_vals_t[range_nStart:range_nEnd],donut_vals_d[range_nStart:range_nEnd]))
 
-    # For each group:
-    # jsonify result, send to client.
-    filename_dict = []
+    # For each range of points, plot the stuff.
     plot_dict = []
-    n = 1
     for cone_set, donut_set, range_set in zip(cone_cropped, donut_cropped, range_cropped):
         # Save values to CSV and save filename ot dict
         big_dict = {"range_vals":{"t":range_set[0].tolist(), "d":range_set[1].tolist()},
                     "cone_vals":{"t":cone_set[0].tolist(), "d":cone_set[1].tolist()},
                     "donut_vals":{"t":donut_set[0].tolist(), "d":donut_set[1].tolist()}}
-        filenameset = _makefilename(filename, n)
-        filename_dict.append(filenameset)
-        n = n + 1
-        saveCSV.jsonToCSV(json.dumps(big_dict),filename = filenameset)
         # Make plot and save in dict
         img = plot.makePlot(big_dict, style='hump')
         plot_dict.append(base64.b64encode(img.getvalue()))
 
-    return (filename_dict, plot_dict)
+        # Find depth for which
+
+
+    return (plot_dict, max_cone_cropped, max_donut_cropped, max_range_cropped)
+
+def calc_frict_ratio(cone_maxes, donut_maxes, range_maxes, filename):
+    """Calculate friction ratios, given arrays of cone_maxes and donut_maxes,
+       the corresponding depths, and the filename with the timestamp it
+       should be saved under.
+       Save data as a file and return values. """
+    # Convert voltages to weight
+    cone_max_lb = []
+    for cone_max in cone_maxes:
+        lb = config_file['calibValues']['cone_m']*cone_max + \
+             config_file['calibValues']['cone_b']
+        cone_max_lb.push(lb)
+        
+    donut_max_lb = []
+    for donut_max in donut_maxes:
+        lb = config_file['calibValues']['donut_m']*donut_max + \
+             config_file['calibValues']['donut_b']
+        donut_max_lb.push(lb)
+    
+    # Calculate friction ratio.
+    friction_ratios = []
+    for i in range(0, len(cone_max_lb)):
+        Fr = 
     
 def _findnearest(array,value):
     """Find the index of numpy array 'array' which is nearest to 'value'. """
@@ -126,5 +150,4 @@ def _makefilename(filename, n):
 
     
 if __name__ == "__main__":
-    with open(sys.argv[1],'r') as f:
-        print analysis(f,sys.argv[1])
+    print find_maxes(sys.argv[1])

@@ -6,7 +6,7 @@ from StringIO import StringIO
 import json
 
 # Open config file
-with open("/root/python-bluetooth/config.json") as f:
+with open("./config.json") as f:
     config_file = json.load(f)
 
 def makePlot(input, style='sensors'):
@@ -45,23 +45,18 @@ def makePlot(input, style='sensors'):
     # Actual Plotting Here
     plt.clf() # clear figure
     plt.figure(1) # optional
-    if style == 'hump':
-        axis1 = plt.subplot(1,2,1)
-    else:
+    if style == 'sensors':
         axis1 = plt.subplot(2, 1, 1) # just like matlab...
-    try:
-        plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r.-')
-    except ValueError:
-        plt.plot(0,0)
-    plt.ylabel('Distance (in)') #this will be a pressure by the time it gets here
-    plt.xlabel('Time (s)')
-    if style == 'hump':
-        plt.legend(['Range Values'], 'upper left')
-    else:
+        try:
+            plt.plot(data["range_vals"]["t"],data["range_vals"]["d"],'r.-')
+        except ValueError:
+            plt.plot(0,0)
+        plt.ylabel('Distance (in)') #this will be a pressure by the time it gets here
+        plt.xlabel('Time (s)')
         plt.legend(['Range Values'], 'lower right')
 
     if style == 'hump':
-        axis2 = plt.subplot(1,2,2)
+        axis2 = plt.subplot(1,1,1)
     else:
         axis2 = plt.subplot(2, 1, 2, sharex=axis1)
     try:
@@ -72,15 +67,15 @@ def makePlot(input, style='sensors'):
     plt.ylabel('Voltage (V)') #this will be a pressure by the time it gets here
     plt.xlabel('Time (s)')
     if style == 'hump':
-        lgd = plt.legend(["Cone Values", "Donut Values"], 'upper right', bbox_to_anchor=(0.9,-0.1))
+        lgd = plt.legend(["Cone Values", "Donut Values"], 'upper right')
     else:
         lgd = plt.legend(["Cone Values", "Donut Values"], 'lower right')
     
     # from http://stackoverflow.com/questions/20107414/passing-a-matplotlib-figure-to-html-flask
     img = StringIO()
-    if not config_file["test"]:
-        plt.savefig(img, bbox_inches="tight") # for production
-    else:
+    plt.savefig(img, bbox_inches="tight") # for production
+    
+    if config_file["test"]:
         plt.savefig('/tmp/test.png') # for debug only
     img.seek(0)
     return img

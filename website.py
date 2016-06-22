@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = True # should be False in production
 
 # load config file
-with open('/root/python-bluetooth/config.json') as f:
+with open('./config.json') as f:
     config_file = json.load(f)
 
 # Sensor related global variables
@@ -140,15 +140,16 @@ def log_get(filename):
 def analysis_html():
     return render_template('analysis.html')
 
-@app.route('/_analysis/upload', methods = ['POST'])
-def _analysis_upload():
-    file = request.files['file']
-    if file and allowed_filename(file.filename):
-        (filename_dict, plot_dict) = analysis.analysis(file, file.filename)
-        response = {'filenames':filename_dict,'plots':plot_dict}
-    else:
-        response = "error"
+@app.route('/_analysis/upload/<filename>', methods = ['POST'])
+def _analysis_upload(filename):
+    (plot_dict, cone_maxes, donut_maxes, range_maxes) = analysis.find_maxes(filename)
+    response = {'plot_dict':plot_dict, 'cone_maxes':cone_maxes, 'donut_maxes':donut_maxes, 'range_maxes':range_maxes, 'filename':filename}
     return jsonify(result = response)
+
+@app.route('/_analysis/calc_ratio', methods=['POST'])
+def _analysis_calc_ratio():
+    print(request.json['range_maxes'])
+    return "Success" 
         
 if __name__ == '__main__':
     app.run()
