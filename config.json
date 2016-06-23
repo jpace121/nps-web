@@ -1,7 +1,7 @@
 {
-    "save_tmp_plot": false ,
     "rootpath": "./",
-    "distance_sensor_path": "/dev/rfcomm0",
+    "save_tmp_plot": false ,
+    "distance_sensor_path": "/dev/tty.DISTOD3910350799-Serial",
     "calibValues": {
         "cone_m": 77.1489,
         "cone_b": -7.5264,
